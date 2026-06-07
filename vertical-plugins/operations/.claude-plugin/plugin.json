@@ -1,0 +1,8 @@
+{
+  "name": "operations",
+  "version": "0.1.0",
+  "description": "China operations — KYC document parsing and rules",
+  "author": {
+    "name": "Anthropic FSI China"
+  }
+}

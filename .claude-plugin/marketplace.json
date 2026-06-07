@@ -1,6 +1,8 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-for-financial-services-china",
   "description": "Chinese financial data and analysis plugins — A-share market data, comps, DCF, earnings analysis using AkShare open-source dataset. China-market equivalent of the main financial-services repo.",
+  "owner": {"name": "jwangkun"},
   "plugins": [
     {
       "name": "china-finance",
@@ -26,6 +28,31 @@
       "name": "china-model-builder",
       "source": "./agent-plugins/china-model-builder",
       "description": "DCF, LBO, 3-statement, and comps models for Chinese equities"
+    },
+    {
+      "name": "investment-banking",
+      "source": "./vertical-plugins/investment-banking",
+      "description": "China investment banking — CIM, teasers, pitch decks, merger models, deal tracking"
+    },
+    {
+      "name": "private-equity",
+      "source": "./vertical-plugins/private-equity",
+      "description": "China private equity — deal sourcing, IC memos, DD checklists, portfolio monitoring"
+    },
+    {
+      "name": "wealth-management",
+      "source": "./vertical-plugins/wealth-management",
+      "description": "China wealth management — client reviews, financial plans, investment proposals"
+    },
+    {
+      "name": "fund-admin",
+      "source": "./vertical-plugins/fund-admin",
+      "description": "China fund administration — NAV tie-out, GL recon, accruals, break tracing"
+    },
+    {
+      "name": "operations",
+      "source": "./vertical-plugins/operations",
+      "description": "China operations — KYC document parsing and rules"
     }
   ]
 }

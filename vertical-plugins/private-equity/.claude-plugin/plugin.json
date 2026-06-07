@@ -1,0 +1,8 @@
+{
+  "name": "private-equity",
+  "version": "0.1.0",
+  "description": "China private equity — deal sourcing, IC memos, DD checklists, portfolio monitoring",
+  "author": {
+    "name": "Anthropic FSI China"
+  }
+}

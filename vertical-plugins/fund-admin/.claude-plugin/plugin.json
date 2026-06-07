@@ -1,0 +1,8 @@
+{
+  "name": "fund-admin",
+  "version": "0.1.0",
+  "description": "China fund administration — NAV tie-out, GL recon, accruals, break tracing",
+  "author": {
+    "name": "Anthropic FSI China"
+  }
+}

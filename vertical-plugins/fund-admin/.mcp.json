@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "akshare": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["../../mcp-servers/akshare-mcp/server.py"]
+    },
+    "china-news": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["../../mcp-servers/china-news-mcp/server.py"]
+    }
+  }
+}
