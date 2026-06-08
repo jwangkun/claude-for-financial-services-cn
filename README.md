@@ -160,23 +160,116 @@ claude plugin install fund-admin@claude-for-financial-services-cn
 
 ---
 
-## 🔌 数据层
+# 🔌 数据层
 
-| 服务 | 类型 | 干什么 |
+本项目采用 **三级数据源优先级策略**：商业数据源优先，自动降级到免费数据源，确保任何场景都有数据可用。
+
+| 优先级 | 服务 | 类型 | 说明 |
+|---|---|---|---|
+| **Tier-1** | ifind-mcp | 💰 付费 | 同花顺 iFind — 覆盖 A 股全量数据（行情/财务/基金/宏观/债券/港美股/指数板块） |
+| **Tier-2** | akshare-mcp | 🆓 免费 | AkShare 开源 — 行情 / 财报 / 行业 / 指数（iFind 不可用时自动降级） |
+| **Tier-3** | china-news-mcp | 🆓 免费 | 财经新闻和公告（财联社 / 东方财富 / 交易所公告） |
+
+### iFind 数据源（新增）
+
+iFind MCP 封装了同花顺 iFind 的远程 MCP 服务，提供 **31 个工具**，覆盖 **7 大服务域**：
+
+| 服务域 | 工具数 | 能力 |
 |---|---|---|
-| **ifind-mcp** | 付费 Tier-1 | 同花顺 iFind（股票/基金/宏观/债券/港美股/ESG/指数板块） |
-| **akshare-mcp** | 免费 Tier-2 | AkShare 数据接口（行情 / 财报 / 行业 / 指数） |
-| **china-news-mcp** | 免费 Tier-3 | 财经新闻和公告（财联社 / 东方财富 / 交易所公告） |
+| **stock** | 10 | 股票搜索、实时行情、历史K线、财务报表、一致预期、股东/机构、公司事件、可比分析 |
+| **fund** | 5 | 基金搜索、基金净值、基金持仓、基金经理、基金对比 |
+| **edb** | 4 | 宏观经济数据库搜索、指标查询、数据下载、指标对比 |
+| **news** | 4 | 新闻搜索、热点追踪、舆情分析、公告查询 |
+| **bond** | 4 | 债券搜索、债券行情、信用评级、到期收益 |
+| **global_stock** | 2 | 港股/美股搜索、全球市场行情 |
+| **index** | 2 | 指数板块搜索、指数成分股 |
+
+#### 安装依赖
 
 ```bash
-# 启动数据服务
-python mcp-servers/akshare-mcp/server.py     # AkShare（免费）
-python mcp-servers/ifind-mcp/server.py       # iFind（需密钥）
-python mcp-servers/china-news-mcp/server.py  # 新闻（免费）
+cd mcp-servers/ifind-mcp
+pip install -r requirements.txt
 ```
 
-iFind 需要配置密钥：设置 `IFIND_AUTH_TOKEN` 环境变量，或写入 `mcp-servers/ifind-mcp/mcp_config.json`。
-获取密钥：https://www.51ifind.com（MCP官网 → 个人中心 → 密钥）
+#### 配置密钥
+
+**方式一：环境变量（推荐）**
+
+```bash
+export IFIND_AUTH_TOKEN="your-jwe-token-here"
+```
+
+**方式二：配置文件**
+
+创建 `mcp-servers/ifind-mcp/mcp_config.json`（已被 `.gitignore` 排除，不会提交）：
+
+```json
+{
+  "auth_token": "your-jwe-token-here"
+}
+```
+
+> **获取密钥：** 访问 https://www.51ifind.com → 登录 → 个人中心 → MCP 密钥管理
+>
+> **版本说明：**
+> - 🆓 **免费版**：支持 stock / bond / index 基础查询（并发 2/s）
+> - 💰 **个人版**：解锁 fund / news / edb 全量服务（并发 5/s）
+> - 🏢 **企业版**：全量 + 高并发（并发 10/s）
+
+#### 启动服务
+
+```bash
+# stdio 模式（本地开发，Claude Desktop / Claude Code 直连）
+python mcp-servers/ifind-mcp/server.py
+
+# SSE 模式（远程部署，Managed Agent 使用）
+python mcp-servers/ifind-mcp/server.py --transport sse --port 8002
+```
+
+#### Claude Desktop 配置
+
+在 `~/Library/Application Support/Claude/claude_desktop_config.json` 中添加：
+
+```json
+{
+  "mcpServers": {
+    "ifind": {
+      "command": "python",
+      "args": ["/path/to/mcp-servers/ifind-mcp/server.py"],
+      "env": {
+        "IFIND_AUTH_TOKEN": "your-jwe-token-here"
+      }
+    }
+  }
+}
+```
+
+#### 使用示例
+
+配置完成后，Claude 会自动调用 iFind 工具获取数据，所有 31 个工具以 `ifind_` 前缀命名：
+
+```
+你：查一下贵州茅台最新的财务数据
+    → Claude 调用 ifind_get_stock_financials("600519.SH")
+
+你：帮我对比宁德时代和比亚迪的估值
+    → Claude 调用 ifind_get_stock_realtime("300750.SZ,002594.SZ")
+
+你：最近宏观经济数据怎么样？
+    → Claude 调用 ifind_search_edb + ifind_get_edb_data
+
+你：搜一下半导体板块有哪些基金
+    → Claude 调用 ifind_search_funds("半导体")
+```
+
+当 iFind 返回错误或该服务域不可用时（如免费版调用 fund/news），系统自动降级到 AkShare 获取替代数据。
+
+### AkShare 数据源（免费备选）
+
+```
+python mcp-servers/akshare-mcp/server.py     # AkShare — 9 个工具
+python mcp-servers/china-news-mcp/server.py  # 新闻公告 — 免费无需密钥
+```
 
 ---
 
