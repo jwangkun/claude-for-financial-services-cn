@@ -11,7 +11,7 @@ Prepare for **A股投资尽调管理层会议** — structured meeting preparati
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_stock_info(ticker)                        → Company overview

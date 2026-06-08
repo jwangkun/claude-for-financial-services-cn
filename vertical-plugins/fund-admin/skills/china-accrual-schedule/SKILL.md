@@ -11,7 +11,7 @@ Build **基金应计项目时间表** — comprehensive accrual tracking for fun
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Revenue, expenses

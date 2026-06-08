@@ -11,7 +11,7 @@ Prepare comprehensive **A股财富管理客户会议材料** — performance sum
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_index_data("000001")              → 上证 benchmark

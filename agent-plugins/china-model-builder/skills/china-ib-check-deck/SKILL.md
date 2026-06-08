@@ -11,7 +11,7 @@ Quality-check **A股投行材料** — comprehensive quality assurance for Chine
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Financial data verification
@@ -52,7 +52,7 @@ get_quote(ticker)                    → Market data verification
 | Revenue (latest) | 巨潮 | | | |
 | Net income (latest) | 巨潮 | | | |
 | EBITDA | Calculated | | | |
-| Market cap | AkShare | | | |
+| Market cap | iFind / AkShare | | | |
 | P/E | Calculated | | | |
 | P/B | Calculated | | | |
 | EV | Calculated | | | |

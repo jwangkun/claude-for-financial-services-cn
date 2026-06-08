@@ -14,7 +14,7 @@
 
 | | 原版 (Wall Street) | 本项目 (A 股) |
 |---|---|---|
-| 数据 | Bloomberg / FactSet / PitchBook | **AkShare**（免费开源） |
+| 数据 | Bloomberg / FactSet / PitchBook | **iFind**（同花顺）+ **AkShare**（免费开源） |
 | 研报 | JPM / GS 英文研报 | **中金 / 中信 / 华泰** 格式 |
 | 模型 | US GAAP | **中国会计准则** |
 | 无风险利率 | 美债 | **中债** |
@@ -79,7 +79,7 @@ claude plugin install fund-admin@claude-for-financial-services-cn
 | `china-xlsx-author` | 生成 .xlsx 文件 |
 | `china-audit-xls` | Excel 模型审计 |
 | `china-clean-data-xls` | 表格数据清洗 |
-| `china-market-data` | AkShare 数据查询入口 |
+| `china-market-data` | iFind + AkShare 数据查询入口 |
 | `china-variance-commentary` | 差异分析注释 |
 | `china-accrual-schedule` | 应计项目时间表 |
 | `china-break-trace` | 差异根因追踪 |
@@ -162,16 +162,21 @@ claude plugin install fund-admin@claude-for-financial-services-cn
 
 ## 🔌 数据层
 
-| 服务 | 干什么 |
-|---|---|
-| **akshare-mcp** | AkShare 数据接口（行情 / 财报 / 行业 / 指数） |
-| **china-news-mcp** | 财经新闻和公告（财联社 / 东方财富 / 交易所公告） |
+| 服务 | 类型 | 干什么 |
+|---|---|---|
+| **ifind-mcp** | 付费 Tier-1 | 同花顺 iFind（股票/基金/宏观/债券/港美股/ESG/指数板块） |
+| **akshare-mcp** | 免费 Tier-2 | AkShare 数据接口（行情 / 财报 / 行业 / 指数） |
+| **china-news-mcp** | 免费 Tier-3 | 财经新闻和公告（财联社 / 东方财富 / 交易所公告） |
 
 ```bash
 # 启动数据服务
-python mcp-servers/akshare-mcp/server.py
-python mcp-servers/china-news-mcp/server.py
+python mcp-servers/akshare-mcp/server.py     # AkShare（免费）
+python mcp-servers/ifind-mcp/server.py       # iFind（需密钥）
+python mcp-servers/china-news-mcp/server.py  # 新闻（免费）
 ```
+
+iFind 需要配置密钥：设置 `IFIND_AUTH_TOKEN` 环境变量，或写入 `mcp-servers/ifind-mcp/mcp_config.json`。
+获取密钥：https://www.51ifind.com（MCP官网 → 个人中心 → 密钥）
 
 ---
 
@@ -188,8 +193,9 @@ python mcp-servers/china-news-mcp/server.py
 │   ├── fund-admin/             # 6 个基金运营技能
 │   └── operations/             # 2 个运营技能
 ├── mcp-servers/                # 数据接口
-│   ├── akshare-mcp/
-│   └── china-news-mcp/
+│   ├── akshare-mcp/           # AkShare（免费）
+│   ├── ifind-mcp/             # 同花顺 iFind（付费）
+│   └── china-news-mcp/        # 新闻公告（免费）
 └── scripts/                    # 校验 / 部署 / 测试
 ```
 
@@ -212,7 +218,7 @@ bash scripts/test-china-cookbooks.sh
 | | claude-for-financial-services | claude-for-financial-services-cn (本项目) |
 |---|---|---|
 | 定位 | 全球金融服务 | **中国 A 股市场** |
-| 数据 | 商业数据商 API | **AkShare 开源数据** |
+| 数据 | 商业数据商 API | **iFind (同花顺) + AkShare (开源)** |
 | 研报 | 欧美投行格式 | **国内卖方研报格式** |
 | 模型 | US GAAP | **中国会计准则** |
 | 协议 | Apache 2.0 | **Apache 2.0** |
@@ -228,6 +234,6 @@ bash scripts/test-china-cookbooks.sh
 ---
 
 <p align="center">
-  Made with 🤖 by Claude · Data by <a href="https://akshare.akfamily.xyz/">AkShare</a><br>
+  Made with 🤖 by Claude · Data by <a href="https://www.51ifind.com">iFind</a> + <a href="https://akshare.akfamily.xyz/">AkShare</a><br>
   <sub>为 A 股市场的金融从业者打造</sub>
 </p>

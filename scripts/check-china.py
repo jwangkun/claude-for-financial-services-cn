@@ -158,12 +158,34 @@ def main() -> int:
         if entry.is_dir():
             server_file = entry / "server.py"
             req_file = entry / "requirements.txt"
+            config_file = entry / "mcp_config.json"
             if server_file.exists():
                 log_ok(f"MCP server {entry.name}/server.py")
             else:
                 log_error(f"MCP server {entry.name} missing server.py")
             if not req_file.exists():
                 log_error(f"MCP server {entry.name} missing requirements.txt")
+            # ifind-mcp and other API-based servers should have config template
+            if entry.name == "ifind-mcp":
+                if config_file.exists():
+                    log_ok(f"MCP server {entry.name}/mcp_config.json")
+                else:
+                    log_error(f"MCP server {entry.name} missing mcp_config.json")
+
+    # 4. Check agent.yaml references ifind MCP when agent prompt uses mcp__ifind__*
+    cookbooks_dir = CHINA_DIR / "managed-agent-cookbooks"
+    if cookbooks_dir.exists():
+        for cb_entry in sorted(cookbooks_dir.iterdir()):
+            if not cb_entry.is_dir():
+                continue
+            agent_yaml = cb_entry / "agent.yaml"
+            if not agent_yaml.exists():
+                continue
+            yaml_text = agent_yaml.read_text(encoding="utf-8")
+            if "ifind" in yaml_text:
+                log_ok(f"cookbook {cb_entry.name}: ifind MCP configured")
+            else:
+                log_error(f"cookbook {cb_entry.name}: agent.yaml missing ifind MCP reference")
 
     print("\n── Done ──\n")
     return 0

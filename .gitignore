@@ -26,6 +26,8 @@ package-lock.json
 *.key
 *.pem
 secrets/
+# iFind / MCP 密钥配置（不要提交真实 token）
+mcp-servers/*/mcp_config.json
 
 # Generated output (PPT, Excel, Word)
 *.pptx

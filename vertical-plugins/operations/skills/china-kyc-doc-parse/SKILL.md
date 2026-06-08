@@ -11,7 +11,7 @@ Parse **中国身份文件** — extract and verify data from Chinese KYC docume
 
 ## Data Sources
 
-### Primary: AkShare MCP (for verification)
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选) (for verification)
 
 ```python
 # Not typically used for KYC; for background checks:

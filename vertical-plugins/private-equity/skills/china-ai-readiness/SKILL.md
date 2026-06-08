@@ -11,7 +11,7 @@ Evaluate **A股被投企业AI就绪度** — assessing portfolio companies' prep
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                        → Company valuation context

@@ -11,7 +11,7 @@ Create institutional-quality **A股首次覆盖研究报告**, following Chinese
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_stock_info(ticker)                    → Company profile

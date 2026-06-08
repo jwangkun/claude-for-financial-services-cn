@@ -15,10 +15,12 @@ tools:
       - { name: grep,  enabled: true }
       - { name: glob,  enabled: true }
   - { type: mcp_toolset, mcp_server_name: akshare,  default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: ifind,    default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: china-news, default_config: { enabled: true } }
 
 mcp_servers:
   - { type: url, name: akshare,    url: "${AKSHARE_MCP_URL}" }
+  - { type: url, name: ifind,      url: "${IFIND_MCP_URL}" }
   - { type: url, name: china-news, url: "${CHINA_NEWS_MCP_URL}" }
 
 skills:

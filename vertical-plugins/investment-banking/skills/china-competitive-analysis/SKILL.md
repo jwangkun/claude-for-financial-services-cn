@@ -11,7 +11,7 @@ Analyze **A股行业竞争格局**, mapping competitive dynamics for Chinese com
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_industry_stocks(industry="...")    → Full peer list

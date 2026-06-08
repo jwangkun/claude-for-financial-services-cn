@@ -11,7 +11,7 @@ Audit **A股财务模型** — comprehensive quality checks for Chinese equity f
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Actuals for cross-check
@@ -64,7 +64,7 @@ get_quote(ticker)                    → Market data
 
 **Cross-check against source data:**
 
-| Line Item | Model | AkShare / 巨潮 | Difference | Explanation |
+| Line Item | Model | iFind / AkShare / 巨潮 | Difference | Explanation |
 |-----------|-------|----------------|------------|-------------|
 | 营业收入 | | | | |
 | 营业成本 | | | | |

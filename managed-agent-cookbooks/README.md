@@ -4,7 +4,7 @@ Every agent in this directory ships **two ways from one source**: as a Cowork pl
 
 Run `../scripts/deploy-managed-agent.sh <slug>` to upload skills, create leaf workers, and `POST /v1/agents` with the resolved config. Each template ships with [`steering-examples.json`](./china-pitch-agent/steering-examples.json) and a per-agent README covering its security tier and handoffs.
 
-All agents use **AkShare** for A-share market data (financial statements, prices, filings, industry classification) and **china-news-mcp** for Chinese-language news and announcements. See the [china-finance vertical plugin](../vertical-plugins/china-finance) for the full skill and connector catalog.
+All agents use **iFind** (Tier-1 付费) and **AkShare** (Tier-2 免费备选) for A-share market data (financial statements, prices, filings, industry classification), and **china-news-mcp** for Chinese-language news and announcements. See the [china-finance vertical plugin](../vertical-plugins/china-finance) for the full skill and connector catalog.
 
 | Agent | Cowork tile | CMA steering event | Leaf workers |
 |---|---|---|---|

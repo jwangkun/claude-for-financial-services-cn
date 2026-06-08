@@ -11,7 +11,7 @@ Monitor **A股及中国市场投资组合公司表现** — financial performanc
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                        → Stock performance

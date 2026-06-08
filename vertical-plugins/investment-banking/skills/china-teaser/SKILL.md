@@ -11,7 +11,7 @@ Draft **A股并购盲审Teaser /  teaser** for sell-side M&A processes — anony
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 # Anonymized financial metrics

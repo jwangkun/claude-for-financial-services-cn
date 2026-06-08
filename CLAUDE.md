@@ -1,6 +1,6 @@
 # CLAUDE.md — China Financial Services Plugins
 
-China-market equivalent of the main `financial-services` repo. All data sourced from open-source Chinese datasets (AkShare / Tushare).
+China-market equivalent of the main `financial-services` repo. All data sourced from Chinese financial data providers (iFind 同花顺 / AkShare / Tushare). iFind is the Tier-1 paid source; AkShare is the Tier-2 free fallback.
 
 ## Source of truth
 
@@ -10,17 +10,28 @@ China-market equivalent of the main `financial-services` repo. All data sourced 
 
 ## Core data layer
 
-Two MCP servers run locally:
+Three MCP servers (multi-tier architecture):
 
 ```bash
-# Start the AkShare data server (A-share market data)
+# Start the AkShare data server (A-share market data, free)
 python3 mcp-servers/akshare-mcp/server.py
 
-# Start the China news server
+# Start the iFind data server (同花顺, paid — requires IFIND_AUTH_TOKEN)
+python3 mcp-servers/ifind-mcp/server.py
+
+# Start the China news server (free)
 python3 mcp-servers/china-news-mcp/server.py
 ```
 
-Both default to stdio transport. For deployment, use `--transport sse --port 8000`.
+All default to stdio transport. For deployment, use `--transport sse --port <PORT>`.
+
+**Data source priority:**
+1. **iFind MCP** (Tier-1 paid) — precise financials, macro/EDB, bonds, HK/US stocks, ESG
+2. **AkShare MCP** (Tier-2 free) — basic quotes, industry classification, indices
+3. **china-news MCP** (Tier-3 free) — news and announcements
+
+iFind requires an auth token: set `IFIND_AUTH_TOKEN` env var or write to `mcp-servers/ifind-mcp/mcp_config.json`.
+Get your key at https://www.51ifind.com (MCP官网 → 个人中心 → 密钥).
 
 AkShare documentation: https://akshare.akfamily.xyz/
 
@@ -49,7 +60,7 @@ python3 scripts/validate.py <output.json> <schema.json|schema.yaml>
 ## Key conventions
 
 - Agent frontmatter: every `agents/*.md` must have YAML `---` with `name` + `description`.
-- Tool references in agent frontmatter use `mcp__akshare__*` and `mcp__china-news__*` syntax.
+- Tool references in agent frontmatter use `mcp__akshare__*`, `mcp__ifind__*`, and `mcp__china-news__*` syntax.
 - Stock codes follow A-share conventions: 6-digit codes, no exchange prefix (e.g., "600519", "000001").
 
 ## Agents (4 China-market)
@@ -64,5 +75,6 @@ python3 scripts/validate.py <output.json> <schema.json|schema.yaml>
 Install per-server:
 ```bash
 pip install -r mcp-servers/akshare-mcp/requirements.txt
+pip install -r mcp-servers/ifind-mcp/requirements.txt
 pip install -r mcp-servers/china-news-mcp/requirements.txt
 ```

@@ -11,7 +11,7 @@ Build professional **A股投行数据包 (Data Pack)** for investment banking wo
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income", "annual")   → P&L history

@@ -11,7 +11,7 @@ Clean and normalize **A股财务数据** — prepare raw financial data from 巨
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Raw income statement

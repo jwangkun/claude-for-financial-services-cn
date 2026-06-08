@@ -1,6 +1,6 @@
 ---
 name: china-skill-creator
-description: Create new China-specific financial skills following the established patterns and conventions. Use this meta-skill to scaffold new china-* skills that integrate with AkShare MCP, follow CAS accounting standards, and adapt workflows for the Chinese market. Triggers on "创建中国skill", "新建A股skill", "create china skill", "new china-skill", "制作skill", or when creating any new china-* skill.
+description: Create new China-specific financial skills following the established patterns and conventions. Use this meta-skill to scaffold new china-* skills that integrate with iFind MCP (Tier-1) and AkShare MCP (Tier-2 fallback), follow CAS accounting standards, and adapt workflows for the Chinese market. Triggers on "创建中国skill", "新建A股skill", "create china skill", "new china-skill", "制作skill", or when creating any new china-* skill.
 ---
 
 # china-skill-creator
@@ -82,7 +82,7 @@ description: [description with triggers]
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 \```python
 get_quote(ticker)                     → [what it returns]
@@ -126,7 +126,7 @@ When adapting from original skill:
 
 | Adaptation Area | China-Specific Changes |
 |----------------|----------------------|
-| Data sources | Replace Western sources with AkShare/巨潮/同花顺 |
+| Data sources | Replace Western sources with iFind/AkShare/巨潮/同花顺 |
 | Accounting | US GAAP → CAS |
 | Tax | US tax → 25% China corporate tax |
 | Currency | USD → CNY (¥) |
@@ -146,12 +146,12 @@ Every china-* SKILL.md must include:
 | `name` | ✓ | Frontmatter, `china-` prefix |
 | `description` | ✓ | Chinese + English, triggers |
 | `## Purpose` | ✓ | One-line description |
-| `## Data Sources` | ✓ | AkShare MCP + secondary |
+| `## Data Sources` | ✓ | iFind MCP (primary) + AkShare (fallback) |
 | `## Workflow` | ✓ | Step-by-step process |
 | `## China-Specific Considerations` | ✓ | China adaptations |
 | `## Quality Checks` | ✓ | Pre-delivery checklist |
 
-### Step 7: AkShare MCP Tool Reference
+### Step 7: Data Source Tool Reference (iFind + AkShare)
 
 **Commonly used tools:**
 
@@ -210,7 +210,7 @@ get_market_headlines(top_n=20)              → Market headlines
 
 **Never use in china-* skills:**
 
-Western data sources, indices, and filing systems must be replaced with China-native equivalents (AkShare / 巨潮 / 上交所 / 深交所 / 中证指数 / 东方财富 / 企查查 / 晨星中国). The `check-china.py` validation script enforces this — any skill containing these patterns will fail validation.
+Western data sources, indices, and filing systems must be replaced with China-native equivalents (iFind / AkShare / 巨潮 / 上交所 / 深交所 / 中证指数 / 东方财富 / 企查查 / 晨星中国). The `check-china.py` validation script enforces this — any skill containing these patterns will fail validation.
 
 See the "China Adaptation Checklist" (Step 5) for the full mapping.
 
@@ -242,7 +242,7 @@ description: [Chinese description with triggers].
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 \```python
 get_quote(ticker) → [description]

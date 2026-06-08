@@ -11,7 +11,7 @@ Systematically surface new **A股投资机会** through quantitative screens, th
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_market_overview()                    → Top gainers, losers, most active

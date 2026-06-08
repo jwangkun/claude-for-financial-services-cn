@@ -11,7 +11,7 @@ Create comprehensive **A股行业/板块深度报告** covering market dynamics,
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_industry_stocks(industry="白酒")     → 板块成分股
@@ -256,7 +256,7 @@ Before delivering:
 - [ ] Industry definition clear and consistent
 - [ ] Market size data sourced (统计局 or industry association)
 - [ ] Competitive landscape covers top 5-10 players
-- [ ] Financials sourced from AkShare / 巨潮
+- [ ] Financials sourced from iFind / AkShare / 巨潮
 - [ ] Valuation multiples calculated consistently
 - [ ] Policy environment analyzed
 - [ ] Investment themes articulated

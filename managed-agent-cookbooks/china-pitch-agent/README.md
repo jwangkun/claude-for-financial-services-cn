@@ -18,12 +18,12 @@ See [`steering-examples.json`](./steering-examples.json).
 
 ## Security & handoffs
 
-Task-decomposition split — less about untrusted inputs (data comes from AkShare MCP), more about parallelism and artifact isolation. Exactly one worker holds `Write`:
+Task-decomposition split — less about untrusted inputs (data comes from iFind / AkShare MCP), more about parallelism and artifact isolation. Exactly one worker holds `Write`:
 
 | Leaf | Tools | Connectors |
 |---|---|---|
-| `researcher` | `Read`, `Grep` | AkShare (read-only) |
-| `modeler` | `Read`, `Bash` (sandboxed) | AkShare (read-only) |
+| `researcher` | `Read`, `Grep` | iFind / AkShare (read-only) |
+| `modeler` | `Read`, `Bash` (sandboxed) | iFind / AkShare (read-only) |
 | **`deck-writer`** (Write-holder) | `Read`, `Write`, `Edit` | None |
 
 Artifacts land in `./out/pitch-<target>.pptx` and `./out/model.xlsx` via `pptx-author` / `xlsx-author`.

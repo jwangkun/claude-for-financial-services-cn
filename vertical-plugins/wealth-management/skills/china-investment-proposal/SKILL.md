@@ -11,7 +11,7 @@ Create professional **A股财富管理投资建议书** — structured proposals
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_index_data("000001")              → Market context

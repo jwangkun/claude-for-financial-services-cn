@@ -11,7 +11,7 @@ Build **A股季报/年报前瞻分析**, preparing for company earnings releases
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                        → Current valuation, PE/PB

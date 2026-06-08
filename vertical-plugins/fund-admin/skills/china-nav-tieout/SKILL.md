@@ -11,7 +11,7 @@ Perform **A股投资组合净值核算** — comprehensive NAV reconciliation an
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                     → Latest prices for holdings

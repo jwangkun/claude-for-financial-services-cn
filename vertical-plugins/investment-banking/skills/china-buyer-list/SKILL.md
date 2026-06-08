@@ -11,7 +11,7 @@ Build **A股潜在收购方名单**, identifying both strategic and financial bu
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_industry_stocks(industry="...")   → Industry peer list

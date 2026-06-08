@@ -11,7 +11,7 @@ Track and maintain **A股投资逻辑/thesis** for portfolio positions and watch
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                        → Current price, valuation

@@ -11,7 +11,7 @@ Create professional **A股季度/年度业绩点评报告**, analyzing results f
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income", "quarterly")   → 利润表 (季度)
@@ -53,7 +53,7 @@ get_stock_news(ticker="{{TICKER}}")          → 相关新闻
 ### Step 1: Pull the Earnings Print
 
 **Data to collect:**
-- Current quarter / full year income statement (from 巨潮 PDF or AkShare)
+- Current quarter / full year income statement (from 巨潮 PDF or iFind/AkShare)
 - Balance sheet and cash flow statement
 - Management commentary / 业绩说明会 transcript
 - Company press release (投资者关系活动记录表)
@@ -194,7 +194,7 @@ Based on current quarter results and management guidance:
 
 **Before delivering:**
 
-- [ ] All numbers sourced from 巨潮 PDF or AkShare
+- [ ] All numbers sourced from 巨潮 PDF or iFind/AkShare
 - [ ] Variance table complete with actual/consensus/prior
 - [ ] Beat/miss flagged with % surprise
 - [ ] Key drivers identified and explained
@@ -236,7 +236,7 @@ Based on current quarter results and management guidance:
 
 ```
 Source: 巨潮资讯, [Company] 2024 年年度报告, p.[X], [URL if applicable]
-Source: AkShare, get_financials(ticker="{{TICKER}}", statement_type="income", period="quarterly")
+Source: iFind ifind_get_stock_financials / AkShare get_financials(ticker="{{TICKER}}", statement_type="income", period="quarterly")
 Source: 慧博投研, [Company] 盈利预测, accessed [Date]
 Source: 同花顺 iFinD, 一致预期数据, accessed [Date]
 ```

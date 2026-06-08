@@ -11,7 +11,7 @@ Perform **A股投资组合再平衡** — analyze allocation drift, generate reb
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                     → Current prices for holdings

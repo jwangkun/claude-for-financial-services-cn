@@ -3,7 +3,7 @@ name: china-pptx-author
 description: >
   Generic PowerPoint authoring skill for A-share investment analysis and pitch decks.
   Creates professional 路演PPT / 投资分析PPT for any A-share company using live data
-  from AkShare MCP tools. All company-specific values are parameterized — never hardcoded.
+  from iFind MCP (Tier-1) and AkShare MCP (Tier-2 fallback) tools. All company-specific values are parameterized — never hardcoded.
   Triggers on "A股PPT制作", "投资PPT", "制作PPT", "路演PPT", "pitch deck",
   "PowerPoint [company/ticker]", or any request to create slides for a Chinese stock.
   When invoked, use the `generate_a_share_ppt` script with --company and --ticker args.
@@ -23,7 +23,7 @@ This skill is a generic engine — every output is driven by two parameters:
 | `{{OUTPUT_PATH}}` | ./output.pptx | Where to save the PPTX file |
 
 All financial figures, price data, peer valuations, and company descriptions are
-fetched live from AkShare / public APIs. **Nothing is hardcoded.**
+fetched live from iFind / AkShare / public APIs. **Nothing is hardcoded.**
 
 ---
 

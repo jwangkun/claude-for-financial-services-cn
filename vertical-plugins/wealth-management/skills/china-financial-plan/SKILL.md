@@ -11,7 +11,7 @@ Create comprehensive **中国家庭/个人财务规划** — retirement, educati
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_index_data("000001")              → A股 historical returns

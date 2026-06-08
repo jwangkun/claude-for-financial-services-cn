@@ -11,7 +11,7 @@ Refresh **A股投资分析PPT** — update existing presentation decks with late
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_quote(ticker)                     → Latest stock price
@@ -49,13 +49,13 @@ get_industry_stocks(industry="...")    → Updated peer data
 
 | Data Item | Source | Update Frequency |
 |-----------|--------|-----------------|
-| Stock price | AkShare | Daily |
+| Stock price | iFind / AkShare | Daily |
 | Market cap | Calculated | Daily |
 | P/E, P/B | Calculated | Daily |
-| Revenue (LTM) | AkShare / 巨潮 | Quarterly |
-| Net income (LTM) | AkShare / 巨潮 | Quarterly |
+| Revenue (LTM) | iFind / AkShare / 巨潮 | Quarterly |
+| Net income (LTM) | iFind / AkShare / 巨潮 | Quarterly |
 | Margins | Calculated | Quarterly |
-| Peer multiples | AkShare | Quarterly |
+| Peer multiples | iFind / AkShare | Quarterly |
 | Forecast estimates | 券商研报 | Quarterly |
 
 ### Step 3: Update Charts

@@ -86,7 +86,7 @@ N/A (template creation)
 营业收入 | | | | |
 归母净利润 | | | | |
 
-底部: 数据来源: 公司年报, AkShare
+底部: 数据来源: 公司年报, iFind/AkShare
 ```
 
 **3. Chart Slide:**
@@ -109,7 +109,7 @@ N/A (template creation)
 [Methodology table]
 目标价: ¥XX - ¥XX
 
-底部: 数据来源: AkShare, Wind
+底部: 数据来源: iFind, AkShare
 ```
 
 **5. Risk Factors:**

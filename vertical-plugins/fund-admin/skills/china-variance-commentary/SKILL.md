@@ -11,7 +11,7 @@ Write professional **基金业绩点评** — structured variance commentary on 
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_fund_data(fund_code)              → Fund NAV, performance

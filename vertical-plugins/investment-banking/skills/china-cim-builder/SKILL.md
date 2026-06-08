@@ -11,7 +11,7 @@ Draft **A股并购CIM (Confidential Information Memorandum)** for sell-side M&A 
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_stock_info(ticker)                        → Company profile

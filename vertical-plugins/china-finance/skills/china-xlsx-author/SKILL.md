@@ -11,7 +11,7 @@ Create professional **A股财务分析Excel模型** — structured workbooks for
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Income statement data

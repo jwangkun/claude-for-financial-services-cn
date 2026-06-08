@@ -11,7 +11,7 @@ Conduct **A股财务核查** — forensic analysis to identify potential issues 
 
 ## Data Sources
 
-### Primary: AkShare MCP
+### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
 get_financials(ticker, "income")     → Revenue, profit trends
