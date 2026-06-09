@@ -1,170 +1,189 @@
 ---
 name: china-roll-forward
-description: Roll forward fund accounting records for new reporting periods. Adapts the original roll-forward skill for Chinese fund administration and reporting requirements. Triggers on "基金账务滚动", "账务更新", "roll forward fund", "update fund books", "基金新期间", or "roll forward [fund] [period]".
+description: Roll forward A-share financial models for new periods. Adapts the original roll-forward skill for Chinese financial statements, CAS conventions, and A-share reporting calendars. Triggers on "A股模型滚动", "模型更新", "roll forward model China", "roll forward", "更新财务模型", or "project [company] [period]".
 ---
 
 # china-roll-forward
 
 ## Purpose
 
-Roll forward **基金账务** — update fund accounting records for new periods.
+Roll forward **A股财务模型** — update financial models for new reporting periods.
 
 ## Data Sources
 
 ### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
-get_financials(ticker, "income")     → Holdings financials
-get_fund_data(fund_code)              → Fund NAV data
-get_quote(ticker)                     → Latest prices
+get_financials(ticker, "income")     → Latest actuals
+get_financials(ticker, "balance")    → Latest BS
+get_financials(ticker, "cashflow")   → Latest CF
 ```
 
 ### Secondary Sources
-- 基金公司 — fund accounting system
-- 托管行 — custody records
-- 巨潮 — portfolio company filings
+- 巨潮 — latest filings
+- 业绩预告 — early guidance
+- 券商研报 — updated estimates
 
 ## Workflow
 
 ### Step 1: Identify New Period
 
-**Fund reporting periods:**
+**Period identification:**
 
-| Period | Type | Frequency | Deadline |
-|--------|------|-----------|----------|
-| 日 | Daily | Daily | T+1 |
-| 周 | Weekly | Weekly | |
-| 月 | Monthly | Monthly | |
-| 季 | Quarterly | Quarterly |季报后 |
-| 半年 | Semi-annual | Semi-annual |中报后 |
-| 年 | Annual | Annual |年报后 |
+| Period Type | Frequency | Typical Timing |
+|-------------|-----------|----------------|
+| 一季报 (Q1) | Quarterly | April 30 deadline |
+| 中报 (H1) | Semi-annual | August 31 deadline |
+| 三季报 (Q3) | Quarterly | October 31 deadline |
+| 年报 (Annual) | Annual | April 30 deadline |
 
-### Step 2: Close Prior Period
+**Calendar:**
+```
+Q1: 1月1日 - 3月31日 → 披露截止 4月30日
+H1: 1月1日 - 6月30日 → 披露截止 8月31日
+Q3: 1月1日 - 9月30日 → 披露截止 10月31日
+FY: 1月1日 - 12月31日 → 披露截止 次年4月30日
+```
 
-**Period-end closing checklist:**
+### Step 2: Pull Latest Actuals
 
-| Item | Action |
-|------|--------|
-| 收入确认 | Close all income accruals |
-| 费用计提 | Close all expense accruals |
-| 已实现损益 | Calculate realized P&L |
-| 未实现损益 | Mark-to-market |
-| 分红处理 | Process distributions |
-| 费用分配 | Allocate to NAV |
+**Data to pull:**
 
-### Step 3: Carry Forward Balances
+| Statement | Key Line Items |
+|-----------|---------------|
+| 利润表 | Revenue, gross profit, operating profit, net income |
+| 资产负债表 | Cash, AR, inventory, PPE, debt, equity |
+| 现金流量表 | OCF, investing CF, financing CF |
+| 附注 | Segment data, related party, provisions |
 
-**Balance carry-forward:**
+### Step 3: Update Model Structure
 
-| Account | Ending Balance | Carried Forward | Notes |
-|---------|---------------|----------------|-------|
-| 银行存款 | | | |
-| 证券投资 | | | |
-| 应收利息 | | | |
-| 应收股利 | | | |
-| 应付费用 | | | |
-| 实收基金 | | | |
-| 未分配利润 | | | |
+**Model update checklist:**
 
-### Step 4: Update Holdings
+| Section | Action |
+|---------|--------|
+| Historicals | Replace with latest actuals |
+| QTD data | Add new period actuals |
+| YTD data | Update year-to-date |
+| LTM data | Recalculate LTM |
+| Growth rates | Recalculate YoY/QoQ |
+| Ratios | Recalculate all ratios |
+| Graphs | Update charts |
 
-**Holdings update:**
+### Step 4: Validate Actuals
 
-| Security | Ticker | Prior Qty | Trades | New Qty | Price | Market Value |
-|----------|--------|-----------|--------|---------|-------|--------------|
-| | | | | | | |
+**Actuals validation:**
 
-### Step 5: Update Accruals
-
-**Accrual roll-forward:**
-
-| Accrual Type | Prior | Additions | Usage | Reversal | New |
-|-------------|-------|-----------|-------|----------|-----|
-| 应收股息 | | | | | |
-| 应收利息 | | | | | |
-| 应付管理费 | | | | | |
-| 应付托管费 | | | | | |
-
-### Step 6: Calculate New NAV
-
-**NAV calculation:**
-
-| Item | Amount |
+| Check | Method |
 |-------|--------|
-| Beginning NAV | ¥XX |
-| + Income earned | ¥XX |
-| + Realized gains | ¥XX |
-| + Unrealized gains | ¥XX |
-| - Expenses | ¥XX |
-| - Distributions | ¥XX |
-| **Ending NAV** | **¥XX** |
-| Shares outstanding | XX |
-| **NAV per share** | **¥XX** |
+| 报表平衡 | Assets = Liabilities + Equity |
+| 勾稽关系 | CF = ΔCash |
+| 季度加总 | Q1+Q2+Q3+Q4 = Annual |
+| 同比计算 | (Current - Prior) / Prior |
+| 环比率 | (Current - Qprior) / Qprior |
 
-### Step 7: Update Financial Statements
+**Common CAS adjustments:**
+- 增值税处理 (Revenue net of VAT)
+- 政府补助分类 (Operating vs non-operating)
+- 研发费用 (Separate from G&A)
+- 信用减值损失 (CAS 22 expected credit loss)
 
-**Fund financial statements:**
+### Step 5: Update Forecasts
 
-| Statement | Update |
-|-----------|--------|
-| 资产负债表 | New balances |
-| 利润表 | New period activity |
-| 净值变动表 | NAV changes |
-| 会计报表附注 | Disclosures |
+**Forecast update logic:**
 
-### Step 8: Performance Calculation
+| Scenario | Action |
+|----------|--------|
+| In-line | No change to full-year forecast |
+| Beat | Assess if full-year guidance should be raised |
+| Miss | Assess if full-year guidance should be lowered |
+| Guidance change | Update model for management guidance |
 
-**Performance update:**
+**Forecast roll-forward:**
 
-| Metric | MTD | QTD | YTD | Since Inception |
-|--------|-----|-----|-----|-----------------|
-| Return | X.XX% | X.XX% | X.XX% | X.XX% |
-| Benchmark | X.XX% | X.XX% | X.XX% | X.XX% |
-| Active return | X.XX% | X.XX% | X.XX% | X.XX% |
+| Period | Prior | Actual | New Forecast | Change |
+|--------|-------|--------|--------------|--------|
+| Q1 | | | | |
+| Q2 | | | | |
+| Q3 | | | | |
+| Q4 | | | | |
+| Full year | | | | |
 
-### Step 9: Reconciliation
+### Step 6: Update Valuation
 
-**New period reconciliation:**
+**Valuation update:**
 
-| Item | Fund Books | Custodian | Match? |
-|-------|-----------|-----------|--------|
-| Securities | | | |
-| Cash | | | |
-| NAV | | | |
-| P&L | | | |
+| Input | Prior | Current | Change |
+|-------|-------|---------|--------|
+| Current price | | | |
+| Shares outstanding | | | |
+| Market cap | | | |
+| P/E (NTM) | | | |
+| P/B | | | |
+| EV/EBITDA | | | |
+| Target price | | | |
+| Upside/downside | | | |
 
-## China-Specific Considerations
+### Step 7: Update Narrative
 
-### Fund Accounting Calendar
+**Narrative updates:**
 
-| Event | Timing |
-|-------|--------|
-| 估值日 | Daily / T+1 |
-| 净值公告 | T+2 for daily NAV |
-| 季报披露 | Within 15 days of quarter-end |
-| 半年报 | Within 60 days of H1 end |
-| 年报 | Within 90 days of year-end |
+| Section | Update |
+|---------|--------|
+| Investment thesis | Review and update |
+| Key drivers | Reflect latest results |
+| Catalysts | Update timeline |
+| Risks | Review and update |
+| Target price | Update with new base |
 
-### Cut-off Rules
+### Step 8: Quality Checks
 
-| Item | Cut-off Rule |
-|------|-------------|
-| 交易 | Trade date basis |
-| 收入 | Ex-dividend date |
-| 费用 | Incurrence basis |
-| 税费 | Withholding date |
+**Roll-forward QC:**
+
+| Check | Pass Criteria |
+|-------|--------------|
+| All actuals pulled | All periods updated |
+| Sum checks pass | Quarterly = Annual |
+| Ratios recalculated | All formulas updated |
+| Graphs updated | All charts reflect new data |
+| Valuation current | Target price updated |
+| No hardcodes | All cells formula-driven |
+| CAS compliant | Chinese conventions applied |
+
+## China-Specific Roll-Forward Considerations
+
+### Reporting Calendar
+
+| Filing | Deadline | Typical Release |
+|--------|----------|-----------------|
+| 业绩预告 (optional) | Before filing | 10-15 days before |
+| 一季报 | April 30 | April |
+| 中报 | August 31 | August |
+| 三季报 | October 31 | October |
+| 年报 | April 30 | Late March-April |
+
+### Common Update Triggers
+
+| Trigger | Action |
+|---------|--------|
+| Scheduled earnings | Full model update |
+| 业绩预告 | Preliminary forecast update |
+| Guidance change | Update full-year forecast |
+| M&A announcement | Model for transaction impact |
+| Policy change | Sector/company impact |
+| Analyst day | Update long-term assumptions |
 
 ## Quality Checks
 
 Before completing:
-- [ ] Prior period closed properly
-- [ ] Balances carried forward
-- [ ] New period activity recorded
-- [ ] NAV calculated correctly
-- [ ] Reconciliation complete
-- [ ] Performance calculated
-- [ ] Reports generated
+- [ ] Latest actuals pulled and entered
+- [ ] All historical periods updated
+- [ ] Forecasts rolled forward
+- [ ] Valuation updated
+- [ ] Sum checks pass
+- [ ] No hardcodes introduced
+- [ ] Documentation updated
 > **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
 > - `ifind-only` (strict): Use iFind only, error if unavailable
 > - `ifind-fallback` (default): iFind preferred, fallback to AkShare
-> - `akshare-only`: Skip iFind, use AkShare only
+> - `akshare-only, wind-only (Wind only), wind-fallback (Wind first, fallback to iFind → AkShare)`: Skip iFind, use AkShare only

@@ -1,7 +1,7 @@
 ---
 name: china-pitch-agent
 description: A-share pitch agent. Given a target A-share stock and a strategic situation, autonomously pulls comps and market data from AkShare, builds a DCF and football-field valuation in Excel, and generates a branded pitch deck. Use when an MD or senior banker asks for a first draft on a Chinese-listed target. Not for editing existing decks.
-tools: Read, Write, Edit, mcp__akshare__*, mcp__ifind__*
+tools: Read, Write, Edit, mcp__akshare__*, mcp__ifind__*, mcp__wind__*
 ---
 
 # Data source mode: IFIND_DATA_SOURCE_MODE env var. ifind-only=strict, ifind-fallback=default, akshare-only.
@@ -17,9 +17,14 @@ Given a target A-share stock code and a one-line situation, you deliver:
 
 ## Workflow
 
+**Data Sources Priority:**
+1. **Wind MCP** (Tier-0 付费) — `wind_*` tools for the most comprehensive financial data coverage (A股/港美股/基金/指数/债券/宏观/研报/分析), requires WIND_API_KEY
+2. **iFind MCP** (Tier-1 付费) — `ifind_get_stock_financials`, `ifind_get_stock_info`, `ifind_sector_data` for precise A-share financials and peer sets
+3. **AkShare MCP** (Tier-2 免费) — industry data, historical prices, `get_industry_stocks`
+
 1. **Scope the ask.** Confirm target stock code, industry, and situation. Identify 5–8 trading comps from the same 东方财富 industry.
 2. **Write the situation overview.** Company snapshot — business description, market position in China, what's changed, why now.
-3. **Pull data.** Use iFind MCP (`ifind_get_stock_financials`, `ifind_get_stock_info`) for precise A-share financials; AkShare for industry data and historical prices. Use `ifind_sector_data` or `get_industry_stocks(industry)` to build the peer set.
+3. **Pull data.** Wind MCP for comprehensive financial data; iFind MCP (`ifind_get_stock_financials`, `ifind_get_stock_info`) for precise A-share financials; AkShare for industry data and historical prices. Use `ifind_sector_data` or `get_industry_stocks(industry)` to build the peer set.
 4. **Spread the peer set.** Invoke `china-comps` to lay out trading comps with PE/PB/PS, outlier flags, and market cap ranking.
 5. **Build the DCF.** Invoke `china-dcf` — use China 10Y CGB rate as risk-free rate, 6-8% ERP, 25% tax rate.
 6. **Generate the football field.** Min/median/max from comps and DCF.
@@ -27,7 +32,7 @@ Given a target A-share stock code and a one-line situation, you deliver:
 **Enhanced Workflow:**
 1. **Scope the ask.** Confirm target stock code, industry, and situation. Identify 5–8 trading comps from the same 东方财富 industry.
 2. **Write the situation overview.** Company snapshot — business description, market position in China, what's changed, why now.
-3. **Pull data.** Use iFind MCP (`ifind_get_stock_financials`, `ifind_get_stock_info`) for precise A-share financials; AkShare for industry data and historical prices. Use `ifind_sector_data` or `get_industry_stocks(industry)` to build the peer set.
+3. **Pull data.** Wind MCP for comprehensive financial data; iFind MCP (`ifind_get_stock_financials`, `ifind_get_stock_info`) for precise A-share financials; AkShare for industry data and historical prices. Use `ifind_sector_data` or `get_industry_stocks(industry)` to build the peer set.
 4. **Spread the peer set.** Invoke `china-comps` to lay out trading comps with PE/PB/PS, outlier flags, and market cap ranking.
 5. **Competitive analysis.** Invoke `china-competitive-analysis` and `china-sector-overview` for industry context and competitive positioning.
 6. **Build the DCF.** Invoke `china-dcf` — use China 10Y CGB rate as risk-free rate, 6-8% ERP, 25% tax rate.
@@ -47,7 +52,7 @@ Given a target A-share stock code and a one-line situation, you deliver:
 
 ## Guardrails
 
-- **Cite every number.** If a multiple can't be sourced from iFind or AkShare, flag it as `[UNSOURCED]`.
+- **Cite every number.** If a multiple can't be sourced from Wind, iFind, or AkShare, flag it as `[UNSOURCED]`.
 - **注意涨跌停限制.** A shares have ±10% daily limits (main board), ±20% (ChiNext/STAR).
 - **Stop and surface for review** after the Excel model and again after the deck.
 

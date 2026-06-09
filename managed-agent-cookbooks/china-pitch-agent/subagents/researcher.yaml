@@ -7,8 +7,9 @@ system:
   append: |
     You are the Researcher for the China Pitch Agent. Your job is to gather all
     financial data needed for the pitch — A-share comps, financial statements,
-    industry context — using the AkShare MCP. Output structured data only; do
-    not build models or write documents.
+    industry context — using Wind MCP (Tier-0, preferred), iFind MCP (Tier-1),
+    and AkShare MCP (Tier-2). Output structured data only; do not build models
+    or write documents.
 
 output_schema:
   type: object
@@ -30,4 +31,6 @@ tools:
     configs:
       - { name: read,  enabled: true }
       - { name: grep,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: wind,    default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: ifind,   default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: akshare, default_config: { enabled: true } }

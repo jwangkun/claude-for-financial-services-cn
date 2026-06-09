@@ -2,18 +2,29 @@
   "mcpServers": {
     "akshare": {
       "type": "stdio",
-      "command": "python",
+      "command": "python3",
       "args": ["../../mcp-servers/akshare-mcp/server.py"]
     },
     "ifind": {
       "type": "stdio",
-      "command": "python",
-      "args": ["../../mcp-servers/ifind-mcp/server.py"]
+      "command": "python3",
+      "args": ["../../mcp-servers/ifind-mcp/server.py"],
+      "env": {
+        "IFIND_AUTH_TOKEN": "${IFIND_AUTH_TOKEN}"
+      }
     },
     "china-news": {
       "type": "stdio",
-      "command": "python",
+      "command": "python3",
       "args": ["../../mcp-servers/china-news-mcp/server.py"]
+    },
+    "wind": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["../../mcp-servers/wind-mcp/server.py"],
+      "env": {
+        "WIND_API_KEY": "${WIND_API_KEY}"
+      }
     }
   }
 }

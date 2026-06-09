@@ -16,10 +16,12 @@ tools:
       - { name: glob,  enabled: true }
   - { type: mcp_toolset, mcp_server_name: akshare, default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: ifind,   default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: wind,    default_config: { enabled: true } }
 
 mcp_servers:
   - { type: url, name: akshare, url: "${AKSHARE_MCP_URL}" }
   - { type: url, name: ifind,   url: "${IFIND_MCP_URL}" }
+  - { type: url, name: wind,    url: "${WIND_MCP_URL}" }
 
 skills:
   - { from_plugin: ../../agent-plugins/china-model-builder }

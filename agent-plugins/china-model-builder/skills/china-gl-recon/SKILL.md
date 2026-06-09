@@ -1,192 +1,232 @@
 ---
 name: china-gl-recon
-description: General ledger reconciliation for A-share fund administration. Tracks fund accounting reconciliations including securities, cash, income, and expense accruals. Adapted from the original gl-recon skill for fund accounting standards. Triggers on "基金总账核对", "基金科目核对", "GL reconciliation fund", "fund accounting recon", or "reconcile [fund] books".
+description: General ledger reconciliation for A-share companies. Adapts the original gl-recon skill for Chinese accounting standards, chart of accounts, and common reconciliation items. Triggers on "A股总账核对", "总账调节", "GL reconciliation China", "科目余额表", or "reconcile [company] accounts".
 ---
 
 # china-gl-recon
 
 ## Purpose
 
-Perform **基金总账核对** — comprehensive general ledger reconciliation for fund accounting.
+Perform **A股总账核对** — comprehensive general ledger reconciliation for Chinese companies.
 
 ## Data Sources
 
 ### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
 
 ```python
-get_financials(ticker, "balance")    → Portfolio company BS
-get_fund_data(fund_code)              → Fund holdings and NAV
-get_quote(ticker)                     → Security prices
+get_financials(ticker, "balance")    → Balance sheet accounts
+get_financials(ticker, "income")     → P&L accounts
 ```
 
 ### Secondary Sources
-- 基金公司 — fund accounting system
-- 托管行 — custody records
-- Wind / Choice — market data
+- 巨潮 — financial statements
+- 审计报告 — reconciliation notes
+- 科目余额表 — trial balance
 
 ## Workflow
 
-### Step 1: Identify GL Accounts
+### Step 1: Understand the Chart of Accounts
 
-**Fund accounting COA:**
+**Common Chinese COA structure:**
 
-| Category | Accounts | Purpose |
-|----------|----------|---------|
-| 资产 (Assets) | Securities, cash, receivables | Investments |
-| 负债 (Liabilities) | Payables, accruals | Amounts owed |
-| 所有者权益 | NAV | Fund value |
-| 收入 (Revenue) | Dividends, interest, gains | Investment income |
-| 费用 (Expenses) | Management fee, custodian fee | Fund costs |
-| 已实现损益 | Realized gains/losses | Trading P&L |
-| 未实现损益 | Unrealized appreciation | Mark-to-market |
+| Category | Account Code Range | Key Accounts |
+|----------|-------------------|--------------|
+| 资产 (Assets) | 1001-1999 | Cash, AR, inventory, PPE |
+| 负债 (Liabilities) | 2001-2999 | AP, debt, provisions |
+| 所有者权益 (Equity) | 3001-3999 | Capital, reserves, retained earnings |
+| 成本 (Cost) | 4001-4999 | COGS, production costs |
+| 损益 (P&L) | 5001-5999 | Revenue, expenses, gains/losses |
 
-### Step 2: Securities Reconciliation
+**Key accounts to reconcile:**
 
-**Securities holdings recon:**
+| Account | CAS Code | Reconciliation Item |
+|---------|----------|-------------------|
+| 银行存款 | 1002 | Bank statement |
+| 应收账款 | 1122 | AR aging |
+| 其他应收款 | 1187 | Related party, advances |
+| 存货 | 1403 | Inventory count |
+| 固定资产 | 1601 | Fixed asset register |
+| 应付账款 | 2202 | Supplier statements |
+| 应付职工薪酬 | 2211 | Payroll records |
+| 应交税费 | 2221 | Tax returns |
+| 未分配利润 | 3405 | P&L close check |
 
-| Security | Ticker | Fund Records | Custodian | Difference | Status |
-|----------|--------|-------------|-----------|------------|--------|
-| | | | | | |
-| | | | | | |
-| **Total** | | | | | |
+### Step 2: Balance Sheet Reconciliation
 
-**Reconciliation items:**
-- 在途交易 (Trades in transit)
-- 配股/增发 (Rights issues)
-- 分红到账 (Dividend settlements)
-- 利息到账 (Interest settlements)
+**BS recon checklist:**
 
-### Step 3: Cash Reconciliation
+| Account | GL Balance | Supporting Docs | Reconciled Amount | Difference |
+|---------|-----------|-----------------|-------------------|------------|
+| 货币资金 | | Bank statements | | |
+| 应收账款 | | Aging report | | |
+| 预付款项 | | Supplier statements | | |
+| 存货 | | Count sheets | | |
+| 其他应收款 | | Detail listing | | |
+| 长期股权投资 | | Investment records | | |
+| 固定资产 | | Asset register | | |
+| 应付账款 | | Supplier confirmations | | |
+| 应付职工薪酬 | | Payroll records | | |
+| 应交税费 | | Tax returns | | |
+| 短期借款 | | Loan agreements | | |
+| 长期借款 | | Loan agreements | | |
 
-**Cash recon:**
+### Step 3: Bank Reconciliation
 
-| Account | GL Balance | Bank Statement | Custodian | Difference |
-|---------|-----------|----------------|-----------|------------|
-| 清算备付金 | | | | |
-| 结算备付金 | | | | |
-| 银行存款 | | | | |
-| **Total** | | | | |
+**Bank recon:**
 
-### Step 4: Income Reconciliation
+| Item | GL | Bank Stmt | Difference |
+|------|-----|-----------|------------|
+| Balance per GL | ¥XX | | |
+| Add: Deposits in transit | | ¥XX | |
+| Less: Outstanding checks | | ¥XX | |
+| Add/Less: Errors | | ¥XX | |
+| Adjusted GL balance | | | ¥XX |
+| Balance per bank | | ¥XX | |
+| Reconciled | ✓ / ✗ | | |
 
-**Income reconciliation:**
+**Common reconciling items (China):**
+- 在途存款 (Deposits in transit)
+- 未兑现支票 (Outstanding checks)
+- 银行手续费 (Bank charges)
+- 利息收入 (Interest income)
+- 未达账项 (Unrecorded items)
 
-| Type | Fund Records | Custodian | Source Docs | Difference |
-|------|-------------|-----------|-------------|------------|
-| 现金股息 | | | | |
-| 股票股息 | | | | |
-| 债券利息 | | | | |
-| 回购利息 | | | | |
-| 基金分红 | | | | |
-| 已实现利得 | | | | |
-| **Total** | | | | |
+### Step 4: AR Reconciliation
 
-### Step 5: Expense Reconciliation
+**AR aging recon:**
 
-**Expense reconciliation:**
+| Aging | GL Balance | Aging Report | Confirmed | Difference |
+|-------|-----------|--------------|-----------|------------|
+| 0-30 days | | | | |
+| 31-60 days | | | | |
+| 61-90 days | | | | |
+| 91-180 days | | | | |
+| >180 days | | | | |
+| Total | | | | |
 
-| Expense | Fund Records | Custodian | Invoice/Contract | Difference |
-|---------|-------------|-----------|-----------------|------------|
-| 管理费 | | | | |
-| 托管费 | | | | |
-| 交易佣金 | | | | |
-| 审计费 | | | | |
-| 信息披露费 | | | | |
-| 律师费 | | | | |
-| **Total** | | | | |
+**AR recon items:**
+- 账龄分析 (Aging analysis)
+- 坏账准备 (Allowance for doubtful accounts)
+- 关联方应收 (Related party AR)
+- 票据应收 (Notes receivable)
+- 预收账款冲减 (Advances from customers)
 
-### Step 6: Accrual Reconciliation
+### Step 5: AP Reconciliation
 
-**Accrual reconciliation:**
+**AP recon:**
 
-| Accrual Type | Calculation | Custodian | Difference |
-|-------------|-------------|-----------|------------|
-| 应收股息 | | | |
-| 应收利息 | | | |
-| 应付管理费 | | | |
-| 应付托管费 | | | |
-| 应付交易费用 | | | |
+| Vendor | GL Balance | Vendor Statement | Confirmed | Difference |
+|--------|-----------|-----------------|-----------|------------|
+| | | | | |
+| | | | | |
+| Total | | | | |
 
-### Step 7: NAV Reconciliation
+### Step 6: Inventory Reconciliation
 
-**NAV reconciliation:**
+**Inventory recon:**
 
-| Component | Fund Books | Custodian | Difference |
-|-----------|-----------|-----------|------------|
-| Securities | | | |
-| Cash | | | |
-| Receivables | | | |
-| Payables | | | |
-| Accruals | | | |
-| **NAV** | | | |
+| Item | GL | Count | Difference | Reason |
+|------|-----|-------|------------|--------|
+| 原材料 | | | | |
+| 在产品 | | | | |
+| 产成品 | | | | |
+| Total | | | | |
 
-**NAV per unit check:**
+**Inventory recon items:**
+- 实物盘点 (Physical count)
+- 在途存货 (Goods in transit)
+- 已发出商品 (Consignment goods)
+- 存货跌价准备 (Obsolescence reserve)
 
-| | Fund | Custodian | Difference |
-|--|------|-----------|------------|
-| NAV (¥) | | | |
-| Shares outstanding | | | |
+### Step 7: Fixed Asset Reconciliation
 
-### Step 8: P&L Reconciliation
+**FA recon:**
 
-**P&L reconciliation:**
+| Asset | GL | Register | Tag Count | Difference |
+|-------|-----|----------|-----------|------------|
+| | | | | |
+| Total | | | | |
 
-| P&L Item | Fund Books | Verified | Notes |
-|----------|-----------|----------|-------|
-| 收入合计 | | | |
-| 费用合计 | | | |
-| 已实现损益 | | | |
-| 未实现损益 | | | |
-| 利润合计 | | | |
+**FA recon items:**
+- 资产标签 (Asset tagging)
+- 折旧计算 (Depreciation calculation)
+- 减值测试 (Impairment testing)
+- 处置记录 (Disposal records)
+- 资本化 vs 费用化 (Capitalization policy)
 
-### Step 9: Trade Reconciliation
+### Step 8: Payroll Reconciliation
 
-**Trade recon:**
+**Payroll recon:**
 
-| Trade Date | Security | Type | Quantity | Price | Fund | Custodian | Match? |
-|-----------|----------|------|----------|-------|------|-----------|--------|
-| | | | | | | | |
+| Item | GL | Payroll Records | Tax Filing | Difference |
+|------|-----|----------------|------------|------------|
+| 工资 | | | | |
+| 社保 | | | | |
+| 公积金 | | | | |
+| 个税 | | | | |
+| Total | | | | |
 
-### Step 10: Exception Report
+### Step 9: Tax Reconciliation
 
-**Exception log:**
+**Tax recon:**
 
-| # | Exception | Type | Amount | Resolution | Status |
-|---|-----------|------|--------|-------------|--------|
-| | | | | | |
+| Tax Type | GL | Tax Return | Difference |
+|-----------|-----|------------|------------|
+| 增值税 | | | |
+| 企业所得税 | | | |
+| 附加税 | | | |
+| 个税 | | | |
+| 社保/公积金 | | | |
 
-## China-Specific Considerations
+### Step 10: P&L Close Check
 
-### Fund Accounting Standards
+**P&L to retained earnings:**
 
-| Standard | Applies |
-|----------|---------|
-| 基金会计核算 | All funds |
-| 企业会计准则 | Private funds |
-| 证券投资基金信息披露 | Disclosure requirements |
+```
+期初未分配利润
++ 本年净利润 (from P&L close)
+- 提取盈余公积
+- 提取任意公积
+- 应付股利
+= 期末未分配利润
+```
+
+**Verify:**
+- P&L close → retained earnings
+- 利润分配 entries
+- Tax entries
+- Dividend entries
+
+## China-Specific Recon Considerations
 
 ### Common Issues
 
-| Issue | Cause | Resolution |
-|-------|-------|-----------|
-| 交易时滞 | T+1 settlement | Track trades in transit |
-| 分红时滞 | Ex-date vs pay-date | Accrue correctly |
-| 费用计提 | Timing differences | Standardize cut-off |
-| 估值差异 | Different pricing sources | Agree on source |
+| Issue | Detection | Resolution |
+|-------|-----------|------------|
+| 在途资金 | Bank recon | Timing difference |
+| 未达账项 | Bank recon | Follow up |
+| 关联方挂账 | AR/AP aging | Related party recon |
+| 发票差异 | Tax recon | Timing/cut-off |
+| 折旧差异 | FA recon | Policy check |
+
+### CAS-Specific Items
+
+| Item | Treatment |
+|------|-----------|
+| 增值税 | Pass-through, check VAT output/input |
+| 政府补助 | Verify classification |
+| 股份支付 | Expense recognition check |
+| 汇兑损益 | FX difference verification |
 
 ## Quality Checks
 
 Before completing:
-- [ ] Securities reconciled
-- [ ] Cash reconciled
-- [ ] Income reconciled
-- [ ] Expenses reconciled
-- [ ] Accruals reconciled
-- [ ] NAV tied out
-- [ ] P&L reconciled
-- [ ] Exceptions resolved
+- [ ] All significant accounts reconciled
+- [ ] Differences investigated and resolved
+- [ ] Documentation complete
 - [ ] Sign-offs obtained
+- [ ] Adjustments proposed (if any)
 > **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
 > - `ifind-only` (strict): Use iFind only, error if unavailable
 > - `ifind-fallback` (default): iFind preferred, fallback to AkShare
-> - `akshare-only`: Skip iFind, use AkShare only
+> - `akshare-only, wind-only (Wind only), wind-fallback (Wind first, fallback to iFind → AkShare)`: Skip iFind, use AkShare only

@@ -6,8 +6,9 @@ model: claude-opus-4-7
 system:
   append: |
     You are the Data Puller for the China Model Builder. Gather all financial
-    data for the target A-share stock using AkShare MCP: historical financials,
-    market data, industry context. Output structured data only.
+    data for the target A-share stock: use Wind MCP (Tier-0, preferred) for
+    comprehensive financials; iFind MCP (Tier-1) for precise financials;
+    AkShare MCP (Tier-2) for basic market data. Output structured data only.
 
 output_schema:
   type: object
@@ -29,4 +30,6 @@ tools:
     configs:
       - { name: read,  enabled: true }
       - { name: grep,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: wind,    default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: ifind,   default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: akshare, default_config: { enabled: true } }

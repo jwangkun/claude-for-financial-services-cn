@@ -6,7 +6,8 @@ model: claude-opus-4-7
 system:
   append: |
     You are the Sector Reader for the China Market Researcher. Gather industry
-    data, company profiles, and market context using AkShare and news MCPs.
+    data, company profiles, and market context using Wind MCP (Tier-0, preferred),
+    iFind MCP (Tier-1), AkShare MCP (Tier-2), and china-news MCP.
     Output structured data only — do not write notes or spreadsheets.
 
 output_schema:
@@ -26,5 +27,7 @@ tools:
     configs:
       - { name: read,  enabled: true }
       - { name: grep,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: wind,       default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: ifind,      default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: akshare,    default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: china-news, default_config: { enabled: true } }

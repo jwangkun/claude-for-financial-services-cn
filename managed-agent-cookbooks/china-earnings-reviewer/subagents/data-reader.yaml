@@ -7,7 +7,8 @@ system:
   append: |
     You are the Data Reader for the China Earnings Reviewer. Pull the
     reported financials and stock news for the target A-share stock using
-    AkShare and news MCPs. Output structured data only.
+    Wind MCP (Tier-0, preferred), iFind MCP (Tier-1), AkShare MCP (Tier-2),
+    and china-news MCP. Output structured data only.
 
 output_schema:
   type: object
@@ -29,5 +30,7 @@ tools:
     configs:
       - { name: read,  enabled: true }
       - { name: grep,  enabled: true }
+  - { type: mcp_toolset, mcp_server_name: wind,       default_config: { enabled: true } }
+  - { type: mcp_toolset, mcp_server_name: ifind,      default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: akshare,    default_config: { enabled: true } }
   - { type: mcp_toolset, mcp_server_name: china-news, default_config: { enabled: true } }

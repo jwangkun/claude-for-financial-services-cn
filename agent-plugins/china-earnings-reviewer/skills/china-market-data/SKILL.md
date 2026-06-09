@@ -7,6 +7,12 @@ description: Query A-share and Chinese financial market data via multiple data s
 
 ## Data sources (multi-tier)
 
+### Tier 0 — 万得 Wind（最全面付费数据）
+- 覆盖：A股/港美股/基金/指数/债券/宏观/研报/分析（44个工具）
+- MCP 服务：`wind-mcp`（需 `WIND_API_KEY` 密钥，以 `ak_` 开头）
+- 优势：全市场覆盖面最广、数据最全面、包含研报和量化分析
+- 密钥申请：https://aifinmarket.wind.com.cn/#/home
+
 ### Tier 1 — 同花顺 iFind（付费精确数据）
 - 覆盖：股票、基金、宏观经济、新闻公告、债券、港美股、指数板块
 - MCP 服务：`ifind-mcp`（需 `IFIND_AUTH_TOKEN` 密钥）
@@ -24,27 +30,32 @@ description: Query A-share and Chinese financial market data via multiple data s
 
 ### 数据源优先级策略
 
-| 场景 | 首选 | 备选 |
-|------|------|------|
-| 股票财务报表（利润表/资产负债表） | `ifind_get_stock_financials` | `get_financials` |
-| 股票基本面/行情 | `ifind_get_stock_info` | `get_stock_info` / `get_quote` |
-| 智能选股 | `ifind_search_stocks` | `search_stock`（仅关键词） |
-| 股东/股本结构 | `ifind_get_stock_shareholders` | — |
-| 风险指标（夏普/Beta/波动率） | `ifind_get_risk_indicators` | — |
-| ESG 评级 | `ifind_get_esg_data` | — |
-| 基金资料/行情/持仓 | `ifind_search_funds` / `ifind_get_fund_*` | `get_fund_data` |
-| 宏观经济指标 | `ifind_search_edb` → `ifind_get_edb_data` | — |
-| 债券数据 | `ifind_bond_*` | — |
-| 港美股 | `ifind_*_global_stock*` | — |
-| 指数/板块 | `ifind_index_data` / `ifind_sector_data` | `get_index_data` |
-| 新闻/公告 | `ifind_search_news` / `ifind_search_notice` | `get_stock_news` |
-| 行业分类/成分股 | `ifind_sector_data` | `get_industry_stocks` |
-| 市场概览（涨跌幅榜） | — | `get_market_overview` |
+| 场景 | Wind (Tier-0) | iFind (Tier-1 首选) | AkShare (Tier-2 备选) |
+|------|---------------|---------------------|----------------------|
+| 股票财务报表（利润表/资产负债表） | `wind_get_stock_financials` | `ifind_get_stock_financials` | `get_financials` |
+| 股票基本面/行情 | `wind_get_stock_info` | `ifind_get_stock_info` | `get_stock_info` / `get_quote` |
+| 智能选股 | `wind_search_stocks` | `ifind_search_stocks` | `search_stock`（仅关键词） |
+| 股东/股本结构 | `wind_get_stock_shareholders` | `ifind_get_stock_shareholders` | — |
+| 一致预期/估值 | `wind_get_stock_consensus` | — | — |
+| 风险指标（夏普/Beta/波动率） | `wind_risk_model` | `ifind_get_risk_indicators` | — |
+| ESG 评级 | — | `ifind_get_esg_data` | — |
+| 基金资料/行情/持仓 | `wind_get_fund_*` | `ifind_search_funds` / `ifind_get_fund_*` | `get_fund_data` |
+| 宏观经济指标 | `wind_get_economic_data` | `ifind_search_edb` → `ifind_get_edb_data` | — |
+| 债券数据 | `wind_get_bond_*` | `ifind_bond_*` | — |
+| 港美股 | `wind_get_global_stock_*` | `ifind_*_global_stock*` | — |
+| 指数/板块 | `wind_get_index_constituents` | `ifind_index_data` / `ifind_sector_data` | `get_index_data` |
+| 新闻/公告 | `wind_get_announcements` | `ifind_search_news` / `ifind_search_notice` | `get_stock_news` |
+| 行业分类/成分股 | `wind_get_index_constituents` | `ifind_sector_data` | `get_industry_stocks` |
+| 市场概览（涨跌幅榜） | — | — | `get_market_overview` |
+| 研报搜索 | `wind_search_research` | — | — |
+| 因子/策略分析 | `wind_factor_analysis` / `wind_backtest` | — | — |
 
 > **Data Source Mode Switch (env var `IFIND_DATA_SOURCE_MODE`)**:
+> - `wind-only` (strict): Wind only, error if unavailable
+> - `wind-fallback` (recommended): Wind preferred, fallback to iFind → AkShare
 > - `ifind-only` (strict): iFind only, error if unavailable
 > - `ifind-fallback` (default): iFind preferred, fallback to AkShare
-> - `akshare-only`: AkShare only, skip iFind
+> - `akshare-only`: AkShare only, skip Wind/iFind
 >
 > Usage: `export IFIND_DATA_SOURCE_MODE=ifind-only`
 

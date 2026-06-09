@@ -11,7 +11,13 @@ Populate **A股投行 Pitch Deck / 路演材料** templates with financial data,
 
 ## Data Sources
 
-### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
+### Tier 0 — 万得 Wind（最全面付费数据）
+- 覆盖：A股/港美股/基金/指数/债券/宏观/研报/分析（44个工具）
+- MCP 服务：`wind-mcp`（需 `WIND_API_KEY` 密钥，以 `ak_` 开头）
+- 优势：全市场覆盖面最广、数据最全面、包含研报和量化分析
+- 密钥申请：https://aifinmarket.wind.com.cn/#/home
+
+### Tier 1 — 同花顺 iFind（付费精确数据）/ AkShare MCP（Tier-2 免费备选）
 
 ```python
 get_stock_info(ticker)                        → Company overview
@@ -221,3 +227,5 @@ Before delivering:
 > - `ifind-only` (strict): Use iFind only, error if unavailable
 > - `ifind-fallback` (default): iFind preferred, fallback to AkShare
 > - `akshare-only`: Skip iFind, use AkShare only
+> - `wind-only`: Wind only, error if unavailable
+> - `wind-fallback`: Wind first, fallback to iFind → AkShare

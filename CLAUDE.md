@@ -1,6 +1,6 @@
 # CLAUDE.md — China Financial Services Plugins
 
-China-market equivalent of the main `financial-services` repo. All data sourced from Chinese financial data providers (iFind 同花顺 / AkShare / Tushare). iFind is the Tier-1 paid source; AkShare is the Tier-2 free fallback.
+China-market equivalent of the main `financial-services` repo. All data sourced from Chinese financial data providers (Wind 万得 / iFind 同花顺 / AkShare / china-news). Wind is the Tier-0 paid source; iFind is the Tier-1 paid source; AkShare is the Tier-2 free fallback.
 
 ## Source of truth
 
@@ -10,9 +10,12 @@ China-market equivalent of the main `financial-services` repo. All data sourced 
 
 ## Core data layer
 
-Three MCP servers (multi-tier architecture):
+Four MCP servers (multi-tier architecture):
 
 ```bash
+# Start the Wind data server (万得, paid — requires WIND_API_KEY)
+python3 mcp-servers/wind-mcp/server.py
+
 # Start the AkShare data server (A-share market data, free)
 python3 mcp-servers/akshare-mcp/server.py
 
@@ -26,12 +29,16 @@ python3 mcp-servers/china-news-mcp/server.py
 All default to stdio transport. For deployment, use `--transport sse --port <PORT>`.
 
 **Data source priority:**
-1. **iFind MCP** (Tier-1 paid) — precise financials, macro/EDB, bonds, HK/US stocks, ESG
-2. **AkShare MCP** (Tier-2 free) — basic quotes, industry classification, indices
-3. **china-news MCP** (Tier-3 free) — news and announcements
+1. **Wind MCP** (Tier-0 paid) — most comprehensive: A股/港美股/基金/指数/债券/宏观/研报/分析, 44 tools
+2. **iFind MCP** (Tier-1 paid) — precise financials, macro/EDB, bonds, HK/US stocks, ESG
+3. **AkShare MCP** (Tier-2 free) — basic quotes, industry classification, indices
+4. **china-news MCP** (Tier-3 free) — news and announcements
 
 iFind requires an auth token: set `IFIND_AUTH_TOKEN` env var or write to `mcp-servers/ifind-mcp/mcp_config.json`.
-Get your key at https://www.51ifind.com (MCP官网 → 个人中心 → 密钥).
+Get your key at https://mcp.51ifind.com/ (MCP官网 → 个人中心 → 密钥).
+
+Wind requires an API key: set `WIND_API_KEY` env var or write to `mcp-servers/wind-mcp/mcp_config.json`.
+Key starts with `ak_`. Get your key at https://aifinmarket.wind.com.cn/#/home.
 
 AkShare documentation: https://akshare.akfamily.xyz/
 
@@ -60,7 +67,7 @@ python3 scripts/validate.py <output.json> <schema.json|schema.yaml>
 ## Key conventions
 
 - Agent frontmatter: every `agents/*.md` must have YAML `---` with `name` + `description`.
-- Tool references in agent frontmatter use `mcp__akshare__*`, `mcp__ifind__*`, and `mcp__china-news__*` syntax.
+- Tool references in agent frontmatter use `mcp__akshare__*`, `mcp__ifind__*`, `mcp__wind__*`, and `mcp__china-news__*` syntax.
 - Stock codes follow A-share conventions: 6-digit codes, no exchange prefix (e.g., "600519", "000001").
 
 ## Agents (4 China-market)
@@ -76,6 +83,7 @@ Install per-server:
 ```bash
 pip install -r mcp-servers/akshare-mcp/requirements.txt
 pip install -r mcp-servers/ifind-mcp/requirements.txt
+pip install -r mcp-servers/wind-mcp/requirements.txt
 pip install -r mcp-servers/china-news-mcp/requirements.txt
 ```
 
@@ -89,5 +97,7 @@ pip install -r mcp-servers/china-news-mcp/requirements.txt
 | **iFind strict** | `ifind-only` | iFind only, error on failure, no AkShare fallback |
 | **iFind priority (default)** | `ifind-fallback` | iFind first, fallback to AkShare |
 | **AkShare only** | `akshare-only` | Skip iFind, use AkShare only |
+| **Wind strict** | `wind-only` | Wind only, error on failure, no fallback |
+| **Wind priority** | `wind-fallback` | Wind first, fallback to iFind → AkShare |
 
 Set in config: `export IFIND_DATA_SOURCE_MODE=ifind-only`

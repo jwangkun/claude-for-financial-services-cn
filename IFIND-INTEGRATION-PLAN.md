@@ -104,3 +104,92 @@ mcp-servers/
 | `ifind_global_stock_events` | global_stock | global_stock_events |
 | `ifind_index_data` | index | index_data |
 | `ifind_sector_data` | index | sector_data |
+
+---
+
+## 万得 Wind 数据源集成（Tier-0）
+
+### 背景
+
+在 iFind 集成完成后，进一步集成万得 Wind 作为最高优先级数据源（Tier-0）。Wind 是中国金融数据行业的标杆，覆盖面最广、数据最全面。
+
+### Wind MCP Server
+
+- 路径：`china/mcp-servers/wind-mcp/`
+- 架构：Python FastMCP 封装万得远程 JSON-RPC 2.0 API
+- 基地址：`https://mcp.wind.com.cn`
+- 认证：`Authorization: Bearer <WIND_API_KEY>`（Key 格式以 `ak_` 开头）
+- 工具数：44 个，覆盖 8 大服务域
+- SSE 默认端口：8003
+- 密钥申请：https://aifinmarket.wind.com.cn/#/home
+
+### 工具映射表
+
+| MCP 工具名 | server_type | 功能 |
+|-----------|-------------|------|
+| `wind_search_stocks` | stock_data | A股智能选股 |
+| `wind_get_stock_info` | stock_data | 股票基本资料/行情 |
+| `wind_get_stock_financials` | stock_data | 财务报表/指标 |
+| `wind_get_stock_shareholders` | stock_data | 股东/机构 |
+| `wind_get_stock_events` | stock_data | 公司事件 |
+| `wind_get_stock_consensus` | stock_data | 一致预期 |
+| `wind_get_stock_technical` | stock_data | 技术指标 |
+| `wind_get_stock_summary` | stock_data | 股票信息摘要 |
+| `wind_search_global_stocks` | global_stock_data | 港美股搜索 |
+| `wind_get_global_stock_info` | global_stock_data | 港美股行情 |
+| `wind_get_global_stock_financials` | global_stock_data | 港美股财务 |
+| `wind_get_global_stock_events` | global_stock_data | 港美股事件 |
+| `wind_compare_global_stocks` | global_stock_data | 跨市场对比 |
+| `wind_search_funds` | fund_data | 基金搜索 |
+| `wind_get_fund_info` | fund_data | 基金资料 |
+| `wind_get_fund_nav` | fund_data | 基金净值 |
+| `wind_get_fund_portfolio` | fund_data | 基金持仓 |
+| `wind_compare_funds` | fund_data | 基金对比 |
+| `wind_get_fund_performance_attribution` | fund_data | 业绩归因 |
+| `wind_search_indices` | index_data | 指数搜索 |
+| `wind_get_index_info` | index_data | 指数行情 |
+| `wind_get_index_constituents` | index_data | 指数成分股 |
+| `wind_get_index_weights` | index_data | 指数权重 |
+| `wind_compare_indices` | index_data | 指数对比 |
+| `wind_search_bonds` | bond_data | 债券搜索 |
+| `wind_get_bond_info` | bond_data | 债券行情 |
+| `wind_get_bond_rating` | bond_data | 信用评级 |
+| `wind_get_bond_yield` | bond_data | 到期收益 |
+| `wind_get_bond_spread` | bond_data | 利差分析 |
+| `wind_search_research` | financial_docs | 研报搜索 |
+| `wind_get_announcements` | financial_docs | 公告查询 |
+| `wind_get_financial_report` | financial_docs | 财报原文 |
+| `wind_get_prospectus` | financial_docs | 招股书 |
+| `wind_get_credit_report` | financial_docs | 评级报告 |
+| `wind_search_economic_indicators` | economic_data | 宏观指标搜索 |
+| `wind_get_economic_data` | economic_data | 宏观数据下载 |
+| `wind_compare_economic_data` | economic_data | 国别对比 |
+| `wind_get_economic_forecast` | economic_data | 预测数据 |
+| `wind_get_leading_indicators` | economic_data | 领先指标 |
+| `wind_factor_analysis` | analytics_data | 因子分析 |
+| `wind_backtest` | analytics_data | 回测 |
+| `wind_risk_model` | analytics_data | 风险模型 |
+| `wind_portfolio_optimization` | analytics_data | 组合优化 |
+| `wind_scenario_analysis` | analytics_data | 情景分析 |
+
+### 数据源优先级（更新后）
+
+1. **Wind** (Tier-0) — 全市场最全面金融数据，44 工具覆盖 8 大服务域
+2. **iFind** (Tier-1) — 精确财务、宏观、债券、港美股、ESG
+3. **AkShare** (Tier-2) — 免费备选，基础行情/财报/行业/指数
+4. **china-news** (Tier-3) — 免费新闻和公告
+
+### 任务清单
+
+| # | 任务 | 文件 | 状态 |
+|---|------|------|------|
+| 1 | 创建 Wind MCP Server | `mcp-servers/wind-mcp/server.py` | ✅ 完成 |
+| 2 | 创建 Wind MCP requirements | `mcp-servers/wind-mcp/requirements.txt` | ✅ 完成 |
+| 3 | 创建 Wind MCP config 模板 | `mcp-servers/wind-mcp/mcp_config.json` | ✅ 完成 |
+| 4 | 更新 6 个 .mcp.json | `vertical-plugins/*/.mcp.json` | ✅ 完成 |
+| 5 | 更新 4 个 agent .md | `agent-plugins/*/agents/*.md` | ✅ 完成 |
+| 6 | 更新 4 个 agent.yaml | `managed-agent-cookbooks/*/agent.yaml` | ✅ 完成 |
+| 7 | 更新 CLAUDE.md | `CLAUDE.md` | ✅ 完成 |
+| 8 | 更新 check-china.py | `scripts/check-china.py` | ✅ 完成 |
+| 9 | 更新 README.md | `README.md` | ✅ 完成 |
+| 10 | 更新 SKILL.md 文件 | `vertical-plugins/*/skills/*/SKILL.md` | ✅ 完成 |

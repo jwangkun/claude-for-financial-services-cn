@@ -7,7 +7,13 @@ description: DCF valuation model for A-share stocks using Chinese financial data
 
 ## Data Sources (Multi-Tier)
 
-### Tier 1 - Tonghuashun iFind (paid, precise)
+### Tier 0 — 万得 Wind（最全面付费数据）
+- 覆盖：A股/港美股/基金/指数/债券/宏观/研报/分析（44个工具）
+- MCP 服务：`wind-mcp`（需 `WIND_API_KEY` 密钥，以 `ak_` 开头）
+- 优势：全市场覆盖面最广、数据最全面、包含研报和量化分析
+- 密钥申请：https://aifinmarket.wind.com.cn/#/home
+
+### Tier 1 — 同花顺 iFind（付费精确数据）
 ```python
 ifind_get_stock_financials(ticker, ...)  -> Historical financials
 ifind_get_stock_info(ticker)             -> Market data, shares outstanding
@@ -22,6 +28,8 @@ get_quote(ticker)                              -> Market cap, price
 ```
 
 > Data source mode switch: When env var `IFIND_DATA_SOURCE_MODE=ifind-only`, use iFind exclusively.
+> - `wind-only`: Wind only, error if unavailable
+> - `wind-fallback`: Wind first, fallback to iFind → AkShare
 
 
 
