@@ -1,182 +1,190 @@
 ---
 name: china-accrual-schedule
-description: Build accrual schedules for A-share companies tracking revenue recognition, expense accruals, and working capital timing. Adapted from the original accrual-schedule skill for CAS accounting and Chinese business practices. Triggers on "A股应计项目", "应计计提", "accrual schedule China", "应计账款分析", or "working capital accruals [company]".
+description: Build accrual schedules for A-share fund administration. Tracks revenue recognition, expense accruals, and working capital timing for fund accounting. Adapted from the original accrual-schedule skill for fund accounting standards. Triggers on "基金应计项目", "应计计提基金", "accrual schedule fund", "NAV accruals", or "accruals [fund]".
 ---
 
 # china-accrual-schedule
 
 ## Purpose
 
-Build **A股应计项目时间表** — comprehensive accrual schedules for financial analysis and audit preparation.
+Build **基金应计项目时间表** — comprehensive accrual tracking for fund accounting and NAV calculation.
 
 ## Data Sources
 
-### Primary: iFind MCP (Tier-1 付费) / AkShare MCP (Tier-2 免费备选)
+### Tier 0 — 万得 Wind（最全面付费数据）
+- 覆盖：A股/港美股/基金/指数/债券/宏观/研报/分析（44个工具）
+- MCP 服务：`wind-mcp`（需 `WIND_API_KEY` 密钥，以 `ak_` 开头）
+- 优势：全市场覆盖面最广、数据最全面、包含研报和量化分析
+- 密钥申请：https://aifinmarket.wind.com.cn/#/home
+
+### Tier 1 — 同花顺 iFind（付费精确数据）/ AkShare MCP（Tier-2 免费备选）
 
 ```python
 get_financials(ticker, "income")     → Revenue, expenses
-get_financials(ticker, "balance")    → Working capital accounts
+get_fund_data(fund_code)             → Fund NAV data
+get_quote(ticker)                    → Security prices
 ```
 
 ### Secondary Sources
-- 巨潮 — annual/quarterly reports
-- 审计报告 — accrual methodology
+- 基金公司 — fund accounting records
+- 托管行 — custody data
+- Wind / Choice — market data
 
 ## Workflow
 
 ### Step 1: Identify Accrual Items
 
-**Revenue accruals:**
+**Fund-specific accruals:**
 
-| Item | Description | Typical Items |
-|------|-------------|---------------|
-| 预收账款 (Deferred revenue) | Advance from customers | Prepayments, deposits |
-| 应收账款 (Accounts receivable) | Revenue recognized, not yet collected | Trade receivables |
-| 合同负债 (Contract liabilities) | New CAS term for prepayments | Contract-based |
-| 应收票据 (Notes receivable) | Commercial acceptance/bank bills | Bills from customers |
+| Category | Items | Frequency |
+|----------|-------|-----------|
+| 收入应计 (Income accruals) | Dividends, interest | Daily |
+| 费用应计 (Expense accruals) | Management fee, custodian fee | Daily/Monthly |
+| 交易应计 (Trade accruals) | Purchases, sales | T+1 |
+| 税费应计 (Tax accruals) | Withholding tax | As incurred |
+| 其他应计 (Other accruals) | Miscellaneous | As needed |
 
-**Expense accruals:**
+### Step 2: Income Accruals
 
-| Item | Description | Typical Items |
-|------|-------------|---------------|
-| 应付账款 (Accounts payable) | Expenses incurred, not yet paid | Trade payables |
-| 应付职工薪酬 (Accrued salaries) | Year-end bonus, unpaid wages | Bonus accruals |
-| 应付利息 (Accrued interest) | Interest on loans, bonds | Interest payable |
-| 预计负债 (Provisions) | Estimated obligations | Warranty, litigation |
-| 递延收益 (Deferred income) | Government grants | Subsidy income |
-| 预提费用 (Accrued expenses) | General accruals | Utilities, rent |
+**Dividend accruals:**
 
-**Other accruals:**
+| Security | Ex-date | Pay-date | Shares | Rate | Accrued Amount |
+|----------|---------|----------|--------|------|----------------|
+| | | | | ¥/股 | |
+| **Total dividends** | | | | | **¥XX** |
 
-| Item | Description |
-|------|-------------|
-| 应交税费 (Taxes payable) | Income tax, VAT, surcharges |
-| 应付股利 (Dividends payable) | Declared but unpaid |
-| 其他应付款 (Other payables) | Miscellaneous |
+**Bond interest accruals:**
 
-### Step 2: Build Accrual Schedule
+| Bond | Coupon | Pay-date | Face Value | Accrued Interest |
+|------|--------|----------|-----------|-----------------|
+| | X% | | ¥XX | ¥XX |
+| **Total bond interest** | | | | **¥XX** |
 
-**Monthly/quarterly accrual tracking:**
+**Other income accruals:**
+- 逆回购利息 (Reverse repo interest)
+- 存款利息 (Bank deposit interest)
+- 基金分红 (Fund distributions)
 
-| Accrual Item | Jan | Feb | ... | Q1 | Q2 | Q3 | Q4 | Full Year |
-|--------------|-----|-----|-----|----|----|----|----|-----------|
-| 应收账款增加 | | | | | | | | |
-| 预收账款增加 | | | | | | | | |
-| 应付账款增加 | | | | | | | | |
-| 应付职工薪酬 | | | | | | | | |
-| ... | | | | | | | | |
-| **Net accruals** | | | | | | | | |
+### Step 3: Expense Accruals
 
-### Step 3: Analyze Accrual Quality
+**Management fee:**
 
-**Accrual ratios:**
+| Parameter | Value |
+|-----------|-------|
+| Annual rate | X.XX% |
+| Daily rate | X.XXXX% (annual / 365) |
+| Calculation | AUM × daily rate × days |
+| Accrued MTD | ¥XX |
+| Accrued YTD | ¥XX |
 
-| Ratio | Formula | Interpretation |
-|-------|---------|---------------|
-| 总应计率 | (ΔCA - ΔCash - ΔCL) / Average Assets | >0 = accrual-based earnings |
-| 应收账款/收入 | AR / Revenue | Rising = potential issues |
-| 应付账款/成本 | AP / COGS | Trend analysis |
-| 预收账款/收入 | Deferred rev / Revenue | Customer prepayments |
-| 经营现金流/净利润 | OCF / Net Income | <1 = accrual concern |
+**Custodian fee:**
 
-**Accrual quality flags:**
+| Parameter | Value |
+|-----------|-------|
+| Annual rate | X.XX% |
+| Calculation | AUM × rate × days/365 |
+| Accrued | ¥XX |
 
-| Flag | Warning |
-|------|---------|
-| 应收账款增速 >> 收入增速 | Potential revenue inflation |
-| 应付账款突然减少 | Potential window dressing |
-| 预收账款大幅波动 | Revenue recognition timing |
-| 其他应付款异常 | Related party tunneling |
+**Other expenses:**
+- 交易佣金 (Trading commissions)
+- 审计费 (Audit fees)
+- 信息披露费 (Disclosure fees)
+- 律师费 (Legal fees)
+- 银行费用 (Bank charges)
 
-### Step 4: CAS-Specific Accrual Items
+### Step 4: Trade Accruals
 
-**China-specific accruals:**
+**T+1 trade settlement:**
 
-| Item | CAS Treatment | Notes |
-|------|--------------|-------|
-| 增值税 | Pass-through, not revenue | 不含税收入 |
-| 政府补助 | 递延收益 or 其他收益 | Timing impact |
-| 坏账准备 | 预期信用损失模型 | CAS 22 |
-| 存货跌价准备 | Lower of cost or NRV | CAS 1 |
-| 固定资产减值 | When indicators exist | CAS 8 |
-| 商誉减值 | Annual test (no reversal) | CAS 8 |
-| 辞退福利 | Employee termination | CAS 9 |
+| Trade Date | Settlement | Security | Type | Quantity | Price | Amount | Status |
+|-----------|-----------|----------|------|----------|-------|--------|--------|
+| | | | Buy/Sell | | ¥X.XX | ¥XX | T / T+1 / Settled |
 
-### Step 5: Working Capital Accruals
+**Trades in transit:**
+- Purchases not yet settled
+- Sales not yet settled
+- Corporate actions pending
 
-**Working capital accrual schedule:**
+### Step 5: Tax Accruals
 
-| Item | Beginning | Additions | Usage | Reversal | Ending |
-|------|-----------|-----------|-------|----------|--------|
-| 坏账准备 | | | | | |
-| 存货跌价准备 | | | | | |
-| 固定资产减值 | | | | | |
-| 预计负债 (产品质量) | | | | | |
+**Withholding tax:**
 
-### Step 6: Revenue Recognition Accruals
+| Type | Rate | Applies To | Accrued |
+|------|------|-----------|---------|
+| 股息红利税 | 20% (10% for >1yr) | A-share dividends | ¥XX |
+| 债券利息税 | 20% | Corporate bond interest | ¥XX |
+| 增值税 | 6% | Management fee (if applicable) | ¥XX |
 
-**CAS 14 revenue recognition:**
+### Step 6: Accrual Schedule
 
-| Scenario | Recognition | Accrual Impact |
-|-----------|-------------|----------------|
-| 商品销售 (Goods) | 控制权转移时 | 通常为交付时 |
-| 提供服务 (Services) | 期间内逐步 | 劳务成本匹配 |
-| 建造合同 (Construction) | 产出法/投入法 | 长期合同 |
-| 特许经营 (Franchise) | 持续期间 | 品牌使用费 |
+**Daily/Monthly accrual tracking:**
 
-**Revenue accrual items:**
-- 发出商品 (Goods in transit)
-- 委托代销 (Consignment)
-- 工程结算 (Construction settlement)
-- 会员费/预付费 (Membership / prepaid)
+| Date | Dividend | Interest | Mgmt Fee | Custodian | Other | Net Accrual |
+|------|----------|----------|----------|-----------|-------|-------------|
+| | | | | | | |
+| MTD | | | | | | |
+| YTD | | | | | | |
 
-### Step 7: Period-End Accrual Review
+### Step 7: NAV Impact
 
-**Month-end / year-end accrual checklist:**
+**Accruals impact on NAV:**
 
-| Area | Items to Review |
-|------|----------------|
-| Revenue | Unbilled revenue, returns, allowances |
-| Purchases | Uninvoiced goods/services |
-| Payroll | Bonus, overtime, social insurance |
-| Interest | Accrued but unpaid |
-| Taxes | Tax provisions |
-| Depreciation | Monthly depreciation |
-| Provisions | Legal, warranty, restructuring |
+| Accrual Type | Impact | Amount |
+|-------------|--------|--------|
+| Accrued income | +NAV | ¥XX |
+| Accrued expenses | -NAV | ¥XX |
+| Net accrual impact | +NAV | ¥XX |
+
+### Step 8: Reconciliation
+
+**Accrual reconciliation:**
+
+| Item | Fund Books | Custodian | Difference | Notes |
+|------|-----------|-----------|------------|-------|
+| Dividends | | | | |
+| Management fee | | | | |
+| Custodian fee | | | | |
+| Other accruals | | | | |
 
 ## China-Specific Considerations
 
+### Fund Accounting Standards
+
+| Standard | Applies |
+|----------|---------|
+| 基金会计核算 | All public funds |
+| 企业会计准则 | Private funds |
+| 证券投资基金 | Mutual funds |
+
 ### Common Accrual Patterns
 
-| Industry | Typical Accruals |
-|----------|-----------------|
-| 制造业 | Raw material AP, bonus accruals |
-| 零售 | Lease accruals, loyalty programs |
-| 房地产 | 预收账款 (presale), construction accruals |
-| 建筑 | 工程结算 (progress billing) |
-| 软件 | Deferred revenue, support accruals |
-| 医药 | Rebates, returns provisions |
+| Fund Type | Key Accruals |
+|-----------|-------------|
+| 股票型基金 | Dividend accruals |
+| 债券型基金 | Interest accruals (daily) |
+| 货币基金 | Interest accruals (daily) |
+| 混合型基金 | Both dividends and interest |
 
-### Audit Considerations (China)
+### Tax Considerations
 
-| Area | Focus |
-|------|-------|
-| 大额应计 | Materiality threshold |
-| 关联方 | Related party payables |
-| 期限 | Aging of receivables |
-| 坏账 | Adequacy of allowance |
-| 政府补助 | Compliance with grant conditions |
+| Tax | Rate | Treatment |
+|-----|------|-----------|
+| 股息红利 | 20% (10% for >1yr) | Withholding |
+| 利息收入 | 20% | Withholding |
+| 价差收益 | 暂免 | No tax on capital gains |
 
 ## Quality Checks
 
-Before delivering:
-- [ ] All significant accruals identified
-- [ ] Schedule ties to financial statements
-- [ ] Trends analyzed
-- [ ] Quality flags addressed
-- [ ] CAS compliance verified
-- [ ] Audit implications noted
+Before finalizing:
+- [ ] All income items accrued
+- [ ] All expenses accrued
+- [ ] Calculations verified
+- [ ] Reconciliation complete
+- [ ] NAV impact quantified
+- [ ] Documentation complete
 > **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
 > - `ifind-only` (strict): Use iFind only, error if unavailable
 > - `ifind-fallback` (default): iFind preferred, fallback to AkShare
 > - `akshare-only`: Skip iFind, use AkShare only
+> - `wind-only`: Wind only, error if unavailable
+> - `wind-fallback`: Wind first, fallback to iFind → AkShare
