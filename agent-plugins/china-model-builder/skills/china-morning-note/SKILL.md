@@ -9,7 +9,21 @@ description: Daily morning research note for A-share markets. Summarizes overnig
 
 Draft concise **A股晨会纪要/每日策略**, summarizing overnight developments and pre-market sentiment for the Chinese equity market. Designed for the typical Chinese sell-side 晨会 format (typically 7:00-8:30 AM before market open).
 
-## Data Sources
+## Data Sources (Multi-Tier)
+
+### Tier 1 - Tonghuashun iFind (paid)
+```python
+ifind_search_news(query)       -> Real-time financial news
+ifind_search_trending_news()   -> Trending events
+ifind_index_data(query)        -> Index data
+ifind_sector_data(query)       -> Sector data
+```
+
+### Tier 2 - AkShare / Other (free, fallback)
+
+> Data source mode: `IFIND_DATA_SOURCE_MODE=ifind-only` for iFind-only mode.
+
+## Data Sources (Legacy)
 
 ### Market Data
 

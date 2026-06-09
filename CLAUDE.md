@@ -78,3 +78,16 @@ pip install -r mcp-servers/akshare-mcp/requirements.txt
 pip install -r mcp-servers/ifind-mcp/requirements.txt
 pip install -r mcp-servers/china-news-mcp/requirements.txt
 ```
+
+
+## Data source mode switch
+
+`IFIND_DATA_SOURCE_MODE` env var controls data source behavior:
+
+| Mode | Value | Behavior |
+|------|-------|----------|
+| **iFind strict** | `ifind-only` | iFind only, error on failure, no AkShare fallback |
+| **iFind priority (default)** | `ifind-fallback` | iFind first, fallback to AkShare |
+| **AkShare only** | `akshare-only` | Skip iFind, use AkShare only |
+
+Set in config: `export IFIND_DATA_SOURCE_MODE=ifind-only`

@@ -41,7 +41,12 @@ description: Query A-share and Chinese financial market data via multiple data s
 | 行业分类/成分股 | `ifind_sector_data` | `get_industry_stocks` |
 | 市场概览（涨跌幅榜） | — | `get_market_overview` |
 
-> 规则：iFind 工具查询失败或超并发时，自动降级到 AkShare。
+> **Data Source Mode Switch (env var `IFIND_DATA_SOURCE_MODE`)**:
+> - `ifind-only` (strict): iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: AkShare only, skip iFind
+>
+> Usage: `export IFIND_DATA_SOURCE_MODE=ifind-only`
 
 ---
 

@@ -67,7 +67,16 @@ Build and maintain a **A股催化剂日历** tracking upcoming events that could
 | 零售数据 | Monthly | Consumption |
 | 就业数据 | Quarterly | Labor market |
 
-## Data Sources
+## Data Sources (Multi-Tier)
+
+### Tier 1 - Tonghuashun iFind (paid)
+```python
+ifind_get_stock_events(query)  -> Key corporate events, dividends, buybacks
+ifind_search_notice(query)     -> Announcement search
+ifind_search_news(query)       -> Related news
+ifind_get_stock_info(ticker)   -> Company profile, share structure
+```
+### Tier 2 - AkShare (free, fallback)
 
 ### Company-Specific
 
@@ -89,6 +98,8 @@ get_stock_info(ticker)                       → Company basic info
 get_index_data("000001")  # 上证指数 context
 get_stock_news(ticker="") # General market news
 ```
+
+> Data source mode: `IFIND_DATA_SOURCE_MODE=ifind-only` for iFind-only mode.
 
 ## Workflow
 

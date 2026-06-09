@@ -245,3 +245,7 @@ Source: 同花顺 iFinD, 一致预期数据, accessed [Date]
 ```
 [UNSOURCED] — estimate based on [rationale]
 ```
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

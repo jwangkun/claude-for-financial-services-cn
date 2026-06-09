@@ -5,6 +5,11 @@
       "command": "python",
       "args": ["../../mcp-servers/akshare-mcp/server.py"]
     },
+    "ifind": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["../../mcp-servers/ifind-mcp/server.py"]
+    },
     "china-news": {
       "type": "stdio",
       "command": "python",

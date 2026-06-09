@@ -182,3 +182,7 @@ get_stock_news(ticker)                    → Recent news
 | 医药 | 管线, 研发投入, 集采中标 |
 | 银行 | NIM, 不良率, 拨备覆盖率 |
 | 互联网 | DAU/MAU, ARPU, 变现效率 |
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

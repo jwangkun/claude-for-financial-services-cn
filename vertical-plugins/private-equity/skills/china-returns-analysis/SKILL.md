@@ -31,7 +31,12 @@ Analyze and report on **中国私募基金回报表现** using IRR, MOIC, and re
 | 基金回报 | Fund-level IRR | Top quartile: 20%+ |
 | 现金回款 | Distributions received | Annual yield target |
 
-## Data Sources
+## Data Sources (Multi-Tier)
+
+### Tier 1 - iFind (paid)
+> When IFIND_AUTH_TOKEN is configured, iFind is the preferred data source.
+> For equivalent iFind tools, see `china-market-data` skill.
+
 
 ### Primary Sources
 
@@ -159,3 +164,7 @@ Before delivering:
 - [ ] Vintage analysis included
 - [ ] J-curve position clear
 - [ ] Sensitivities run
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

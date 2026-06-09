@@ -231,3 +231,7 @@ Before delivering thesis update:
 - [ ] Risk factors updated
 - [ ] Action recommendation clear
 - [ ] Next review date set
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

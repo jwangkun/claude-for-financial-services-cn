@@ -234,3 +234,7 @@ Required args: `--company`, `--ticker`
 Optional: `--industry` (for peer lookup), `--output`, `--type` (pitch/deep_dive/initiation), `--title`
 
 If `--industry` is omitted, the script attempts to infer it from the company's sector classification.
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

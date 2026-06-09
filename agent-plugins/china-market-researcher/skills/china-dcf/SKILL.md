@@ -5,6 +5,27 @@ description: DCF valuation model for A-share stocks using Chinese financial data
 
 # china-dcf
 
+## Data Sources (Multi-Tier)
+
+### Tier 1 - Tonghuashun iFind (paid, precise)
+```python
+ifind_get_stock_financials(ticker, ...)  -> Historical financials
+ifind_get_stock_info(ticker)             -> Market data, shares outstanding
+ifind_get_risk_indicators(ticker)        -> Beta, volatility for WACC
+```
+
+### Tier 2 - AkShare (free, open-source, fallback)
+```python
+get_financials(ticker, "income", "annual")     -> Historical P and L
+get_financials(ticker, "balance", "annual")    -> Historical BS
+get_quote(ticker)                              -> Market cap, price
+```
+
+> Data source mode switch: When env var `IFIND_DATA_SOURCE_MODE=ifind-only`, use iFind exclusively.
+
+
+
+
 ## Key differences from US-market DCF
 
 | Parameter | US DCF Convention | China DCF Convention |

@@ -213,3 +213,7 @@ Before delivering:
 - [ ] Valuation update reflects current market conditions
 - [ ] Changes documented in update memo
 - [ ] Model passes basic QC (balance checks, sum checks)
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

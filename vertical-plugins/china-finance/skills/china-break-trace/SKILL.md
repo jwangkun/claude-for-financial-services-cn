@@ -216,3 +216,7 @@ Before delivering report:
 - [ ] Conclusions supported
 - [ ] Regulatory signals checked
 - [ ] Report structured clearly
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

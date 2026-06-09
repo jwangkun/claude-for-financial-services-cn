@@ -33,3 +33,4 @@ mcp-servers/*/mcp_config.json
 *.pptx
 *.xlsx
 *.docx
+.claude/settings.local.json

@@ -212,3 +212,7 @@ After meeting:
 - [ ] Action items assigned
 - [ ] Portfolio adjustments executed
 - [ ] Next meeting scheduled
+> **Data Source Mode Switch**: Set env var `IFIND_DATA_SOURCE_MODE` to control data source preference.
+> - `ifind-only` (strict): Use iFind only, error if unavailable
+> - `ifind-fallback` (default): iFind preferred, fallback to AkShare
+> - `akshare-only`: Skip iFind, use AkShare only

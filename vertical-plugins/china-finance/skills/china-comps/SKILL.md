@@ -1,5 +1,35 @@
 ---
 name: china-comps
+description: Comparable company analysis for A-share stocks. Uses AkShare MCP to build peer groups, pull financial data, compute valuation multiples (PE, PB, PS), and assess relative value within a Chinese industry sector.
+---
+
+# china-comps
+
+## Data Sources (Multi-Tier)
+
+### Tier 1 — 同花顺 iFind（付费精确数据）
+Use ifind MCP when a valid `IFIND_AUTH_TOKEN` is configured.
+
+```python
+ifind_get_stock_info(ticker)             → Company profile, multiples
+ifind_get_stock_financials(ticker, ...)  → Revenue, net income, margins
+ifind_search_stocks(query)               → Industry-wide stock screening
+```
+
+### Tier 2 — AkShare（免费开源数据）
+Fallback when iFind is unavailable.
+
+```python
+get_quote(ticker)              → Price, PE, PB, market cap
+get_financials(ticker, "income", "annual")  → Revenue, net income
+get_financials(ticker, "balance", "annual") → Book value
+get_stock_info(ticker)         → Business description
+```
+
+> **数据源模式开关**: 当环境变量 `IFIND_DATA_SOURCE_MODE=ifind-only` 时，仅使用 iFind 数据源，禁用 AkShare 降级。
+
+---
+name: china-comps
 description: Comparable company analysis for A-share stocks. Uses the AkShare MCP to build peer groups, pull financial data, compute valuation multiples (PE, PB, PS), and assess relative value within a Chinese industry sector. Use instead of the original comps-analysis skill when dealing with Chinese-listed equities.
 ---
 
