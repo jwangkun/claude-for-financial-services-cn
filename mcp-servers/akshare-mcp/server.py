@@ -21,6 +21,8 @@ from typing import Any
 import akshare as ak
 import pandas as pd
 
+import cn_sources as cn
+
 try:
     from mcp.server.fastmcp import FastMCP
 except ImportError:
@@ -67,10 +69,14 @@ def search_stock(keyword: str) -> str:
     Returns matching stocks with code, name, and market.
     """
     try:
-        df = ak.stock_info_a_code_name()
-        mask = df["code"].astype(str).str.contains(keyword, case=False) | df["name"].str.contains(keyword, case=False)
-        result = df[mask].head(20)
-        return _df_to_json(result)
+        if cn.em_available():
+            try:
+                df = ak.stock_info_a_code_name()
+                mask = df["code"].astype(str).str.contains(keyword, case=False) | df["name"].str.contains(keyword, case=False)
+                return _df_to_json(df[mask].head(20))
+            except Exception:
+                pass
+        return json.dumps(cn.search_alt(keyword), ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": f"search_stock failed: {e}"}, ensure_ascii=False)
 
@@ -82,11 +88,15 @@ def get_quote(ticker: str) -> str:
     Returns price, change %, volume, turnover, PE, PB, market cap, and more.
     """
     try:
-        df = ak.stock_zh_a_spot_em()
-        df = df[df["代码"] == ticker]
-        if df.empty:
-            return json.dumps({"error": f"ticker {ticker} not found"}, ensure_ascii=False)
-        return _df_to_json(df)
+        if cn.em_available():
+            try:
+                df = ak.stock_zh_a_spot_em()
+                df = df[df["代码"] == ticker]
+                if not df.empty:
+                    return _df_to_json(df)
+            except Exception:
+                pass
+        return json.dumps(cn.quote_alt(_clean_code(ticker)), ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": f"get_quote failed: {e}"}, ensure_ascii=False)
 
@@ -107,8 +117,13 @@ def get_historical_data(ticker: str, start_date: str = "", end_date: str = "", f
         if not start_date:
             start = date.today().replace(year=date.today().year - 1)
             start_date = start.strftime("%Y%m%d")
-        df = ak.stock_zh_a_hist(symbol=ticker, period=frequency, start_date=start_date, end_date=end_date, adjust="qfq")
-        return _df_to_json(df)
+        if cn.em_available():
+            try:
+                df = ak.stock_zh_a_hist(symbol=ticker, period=frequency, start_date=start_date, end_date=end_date, adjust="qfq")
+                return _df_to_json(df)
+            except Exception:
+                pass
+        return _df_to_json(cn.hist_alt(_clean_code(ticker), start_date, end_date, frequency))
     except Exception as e:
         return json.dumps({"error": f"get_historical_data failed: {e}"}, ensure_ascii=False)
 
@@ -123,20 +138,18 @@ def get_financials(ticker: str, statement_type: str = "income", period: str = "a
         period: "annual" (年报), "quarterly" (季报).
     """
     try:
-        type_map = {
-            "income": "利润表",
-            "balance": "资产负债表",
-            "cashflow": "现金流量表",
-        }
-        symbol_key = f"{ticker}"
-        df = ak.stock_financial_abstract_ths(symbol=symbol_key, indicator=type_map.get(statement_type, "利润表"))
+        # 新浪三大报表为主源（分表、字段全、海外网络可达）。
+        # 同花顺摘要接口 indicator 仅支持 按报告期/按年度/按单季度，旧实现传表名会被忽略，
+        # 且其"报告期"列为年份整数，按 "12-31" 过滤年报必为空，故仅以修正后的同花顺摘要兜底。
+        try:
+            df = cn.financials_sina(_clean_code(ticker), statement_type, period)
+            if df is not None and not df.empty:
+                return _df_to_json(df)
+        except Exception:
+            pass
+        df = cn.financials_ths(_clean_code(ticker), period)
         if df is not None and not df.empty:
-            if period == "annual":
-                mask = df.iloc[:, 0].astype(str).str.contains("12-31")
-                result = df[mask].head(5)
-            else:
-                result = df.head(8)
-            return _df_to_json(result)
+            return _df_to_json(df)
         return json.dumps({"error": "no financial data returned"}, ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": f"get_financials failed: {e}"}, ensure_ascii=False)
@@ -151,11 +164,15 @@ def get_industry_stocks(industry: str = "") -> str:
                   If empty, returns all available industry names.
     """
     try:
-        board_df = ak.stock_board_industry_name_em()
-        if not industry:
-            return _df_to_json(board_df[["板块名称", "板块代码", "涨跌幅", "上涨家数", "下跌家数"]].head(50))
-        cons = ak.stock_board_industry_cons_em(symbol=industry)
-        return _df_to_json(cons)
+        if cn.em_available():
+            try:
+                board_df = ak.stock_board_industry_name_em()
+                if not industry:
+                    return _df_to_json(board_df[["板块名称", "板块代码", "涨跌幅", "上涨家数", "下跌家数"]].head(50))
+                return _df_to_json(ak.stock_board_industry_cons_em(symbol=industry))
+            except Exception:
+                pass
+        return _df_to_json(cn.industry_alt(industry))
     except Exception as e:
         return json.dumps({"error": f"get_industry_stocks failed: {e}"}, ensure_ascii=False)
 
@@ -191,8 +208,12 @@ def get_stock_info(ticker: str) -> str:
     Returns: industry, market cap, listing date, business scope, etc.
     """
     try:
-        info = ak.stock_individual_info_em(symbol=ticker)
-        return _df_to_json(info)
+        if cn.em_available():
+            try:
+                return _df_to_json(ak.stock_individual_info_em(symbol=ticker))
+            except Exception:
+                pass
+        return _df_to_json(cn.stock_info_alt(_clean_code(ticker)))
     except Exception as e:
         return json.dumps({"error": f"get_stock_info failed: {e}"}, ensure_ascii=False)
 
@@ -204,17 +225,21 @@ def get_market_overview() -> str:
     Returns: ranked list of stocks with price, change %, volume, and turnover.
     """
     try:
-        df = ak.stock_zh_a_spot_em()
-        if df.empty:
-            return json.dumps({"error": "no market data"}, ensure_ascii=False)
-        top_gainers = df.nlargest(10, "涨跌幅").to_dict(orient="records")
-        top_losers = df.nsmallest(10, "涨跌幅").to_dict(orient="records")
-        most_active = df.nlargest(10, "成交额").to_dict(orient="records")
-        return json.dumps({
-            "top_gainers": [{k: str(v) for k, v in r.items()} for r in top_gainers],
-            "top_losers": [{k: str(v) for k, v in r.items()} for r in top_losers],
-            "most_active": [{k: str(v) for k, v in r.items()} for r in most_active],
-        }, ensure_ascii=False)
+        if cn.em_available():
+            try:
+                df = ak.stock_zh_a_spot_em()
+                if not df.empty:
+                    top_gainers = df.nlargest(10, "涨跌幅").to_dict(orient="records")
+                    top_losers = df.nsmallest(10, "涨跌幅").to_dict(orient="records")
+                    most_active = df.nlargest(10, "成交额").to_dict(orient="records")
+                    return json.dumps({
+                        "top_gainers": [{k: str(v) for k, v in r.items()} for r in top_gainers],
+                        "top_losers": [{k: str(v) for k, v in r.items()} for r in top_losers],
+                        "most_active": [{k: str(v) for k, v in r.items()} for r in most_active],
+                    }, ensure_ascii=False)
+            except Exception:
+                pass
+        return json.dumps(cn.market_overview_alt(), ensure_ascii=False)
     except Exception as e:
         return json.dumps({"error": f"get_market_overview failed: {e}"}, ensure_ascii=False)
 
@@ -227,8 +252,15 @@ def get_fund_data(fund_code: str) -> str:
         fund_code: Fund code (e.g., "000001" for Huitianfu).
     """
     try:
-        df = ak.fund_etf_spot_em()
-        result = df[df["代码"] == fund_code]
+        if cn.em_available():
+            try:
+                df = ak.fund_etf_spot_em()
+                result = df[df["代码"] == fund_code]
+                if not result.empty:
+                    return _df_to_json(result)
+            except Exception:
+                pass
+        result = cn.fund_alt(fund_code)
         if result.empty:
             return json.dumps({"error": f"fund {fund_code} not found"}, ensure_ascii=False)
         return _df_to_json(result)
