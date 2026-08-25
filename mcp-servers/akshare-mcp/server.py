@@ -115,27 +115,26 @@ def get_historical_data(ticker: str, start_date: str = "", end_date: str = "", f
 
 @server.tool()
 def get_financials(ticker: str, statement_type: str = "income", period: str = "annual") -> str:
-    """Get financial statement data for an A-share stock.
+    """Get key financial abstract data for an A-share stock (同花顺财务摘要).
+
+    Returns one combined table of key income/balance/cashflow items per period
+    (revenue, net profit, margins, ROE, leverage, per-share metrics, etc.).
 
     Args:
         ticker: Stock code (e.g., "600519").
-        statement_type: "income" (利润表), "balance" (资产负债表), "cashflow" (现金流量表).
-        period: "annual" (年报), "quarterly" (季报).
+        statement_type: accepted for backward compatibility; the THS abstract
+            is a single combined table, so this argument is ignored.
+        period: "annual" (按年度, last 5 years), "quarterly" (按单季度, last 8).
     """
     try:
-        type_map = {
-            "income": "利润表",
-            "balance": "资产负债表",
-            "cashflow": "现金流量表",
-        }
-        symbol_key = f"{ticker}"
-        df = ak.stock_financial_abstract_ths(symbol=symbol_key, indicator=type_map.get(statement_type, "利润表"))
+        # THS abstract's `indicator` selects the period granularity, not the
+        # statement type; the returned table mixes key income/balance/cashflow
+        # items, so `statement_type` is accepted for compatibility but unused.
+        indicator = "按年度" if period == "annual" else "按单季度"
+        df = ak.stock_financial_abstract_ths(symbol=ticker, indicator=indicator)
         if df is not None and not df.empty:
-            if period == "annual":
-                mask = df.iloc[:, 0].astype(str).str.contains("12-31")
-                result = df[mask].head(5)
-            else:
-                result = df.head(8)
+            # rows are ordered oldest-first; keep the most recent periods
+            result = df.tail(5) if period == "annual" else df.tail(8)
             return _df_to_json(result)
         return json.dumps({"error": "no financial data returned"}, ensure_ascii=False)
     except Exception as e:
